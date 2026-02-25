@@ -13,11 +13,9 @@
       "bemerkung": "",
       "tankstopps": [
         {
-          "time": "22:31",
           "ort": "jet",
           "km": 10,
-          "liter": 10,
-          "bemerkung": "nix"
+          "liter": 10
         }
       ],
       "kmEnd": 10,
@@ -29,5 +27,5 @@
   ],
   "settings": {},
   "offeneFahrt": null,
-  "lastSync": "2026-02-25T21:32:32.768Z"
+  "lastSync": "2026-02-25T21:33:57.517Z"
 }
