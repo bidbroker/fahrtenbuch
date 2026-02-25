@@ -19,7 +19,24 @@
       "verbrauch": null
     }
   ],
-  "settings": {},
-  "offeneFahrt": null,
-  "lastSync": "2026-02-25T22:07:48.048Z"
+  "settings": {
+    "title": "Buggy",
+    "kz": "WU 327AF",
+    "vin": "",
+    "motor": "",
+    "sub": "Rot"
+  },
+  "offeneFahrt": {
+    "id": 1772057321658,
+    "datum": "2026-02-25",
+    "zweck": "test11fefge",
+    "von": "Gablitz",
+    "bis": "Purkersdorf",
+    "kmStart": 2,
+    "timeStart": "23:07",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "",
+    "bemerkung": ""
+  },
+  "lastSync": "2026-02-25T22:08:41.907Z"
 }
