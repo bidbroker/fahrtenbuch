@@ -1062,6 +1062,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v5 · 2026</p>
   </div>
 </header>
 
@@ -1461,61 +1462,95 @@ function collectTankStops(listId) {
 // PHASE 1: Abfahrt starten
 document.getElementById('abfahrt-form').addEventListener('submit', e => {
   e.preventDefault();
+  try {
+    offeneFahrt = {
+      id: Date.now(),
+      datum: document.getElementById('f-datum').value,
+      zweck: document.getElementById('f-zweck').value.trim(),
+      von: document.getElementById('f-von').value.trim(),
+      bis: document.getElementById('f-bis').value.trim(),
+      kmStart: parseFloat(document.getElementById('f-km-start').value),
+      timeStart: document.getElementById('f-time-start').value,
+      fahrer: document.getElementById('f-fahrer').value.trim(),
+      mitfahrer: document.getElementById('f-mitfahrer').value.trim(),
+      bemerkung: document.getElementById('f-bemerkung').value.trim(),
+      tankstopps: []
+    };
 
-  offeneFahrt = {
-    id: Date.now(),
-    datum: document.getElementById('f-datum').value,
-    zweck: document.getElementById('f-zweck').value.trim(),
-    von: document.getElementById('f-von').value.trim(),
-    bis: document.getElementById('f-bis').value.trim(),
-    kmStart: parseFloat(document.getElementById('f-km-start').value),
-    timeStart: document.getElementById('f-time-start').value,
-    fahrer: document.getElementById('f-fahrer').value.trim(),
-    mitfahrer: document.getElementById('f-mitfahrer').value.trim(),
-    bemerkung: document.getElementById('f-bemerkung').value.trim(),
-  };
+    saveOffenLocal();
+    renderNeuPage();
+    showToast('🚗 Fahrt gestartet!');
 
-  saveOffen();
-  renderNeuPage();
-  showToast('🚗 Fahrt gestartet! Ankunft nach der Fahrt eintragen.');
+    if (ghConfig) {
+      saveToGitHub().catch(e => console.warn('GitHub sync:', e));
+    }
+  } catch(err) {
+    console.error('Abfahrt Fehler:', err);
+    showToast('⚠ Fehler: ' + err.message);
+  }
 });
 
 // PHASE 2: Ankunft speichern
 document.getElementById('ankunft-form').addEventListener('submit', e => {
   e.preventDefault();
-  if (!offeneFahrt) return;
+  try {
+    if (!offeneFahrt) return;
 
-  const kmEnd = parseFloat(document.getElementById('f-km-end').value);
-  if (kmEnd < offeneFahrt.kmStart) { showToast('⚠ KM-Ende muss größer als KM-Beginn sein!'); return; }
+    const kmEnd = parseFloat(document.getElementById('f-km-end').value);
+    if (!kmEnd || kmEnd <= 0) { showToast('⚠ Bitte KM-Stand Ende eingeben!'); return; }
+    if (kmEnd < offeneFahrt.kmStart) { showToast('⚠ KM-Ende muss größer als KM-Beginn sein!'); return; }
 
-  const tankstopps = offeneFahrt.tankstopps || [];
-  const gesamtLiter = tankstopps.reduce((s, t) => s + (t.liter||0), 0);
-  const strecke = kmEnd - offeneFahrt.kmStart;
-  const verbrauch = (strecke > 0 && gesamtLiter > 0)
-    ? ((gesamtLiter / strecke) * 100).toFixed(1) : null;
+    const tankstopps = offeneFahrt.tankstopps || [];
+    const gesamtLiter = tankstopps.reduce((s, t) => s + (t.liter||0), 0);
+    const strecke = kmEnd - offeneFahrt.kmStart;
+    const verbrauch = (strecke > 0 && gesamtLiter > 0)
+      ? ((gesamtLiter / strecke) * 100).toFixed(1) : null;
 
-  // Bemerkungen zusammenführen
-  const bemEnd = document.getElementById('f-bemerkung-end').value.trim();
-  const bemerkung = [offeneFahrt.bemerkung, bemEnd].filter(Boolean).join(' | ');
+    const bemEndEl = document.getElementById('f-bemerkung-end');
+    const bemEnd = bemEndEl ? bemEndEl.value.trim() : '';
+    const bemerkung = [offeneFahrt.bemerkung, bemEnd].filter(Boolean).join(' | ');
 
-  const fahrt = {
-    ...offeneFahrt,
-    kmEnd,
-    strecke,
-    timeEnd: document.getElementById('f-time-end').value,
-    bemerkung,
-    tankstopps,
-    gesamtLiter,
-    verbrauch
-  };
+    const fahrt = {
+      id:        offeneFahrt.id,
+      datum:     offeneFahrt.datum,
+      zweck:     offeneFahrt.zweck,
+      von:       offeneFahrt.von,
+      bis:       offeneFahrt.bis,
+      kmStart:   offeneFahrt.kmStart,
+      kmEnd,
+      strecke,
+      timeStart: offeneFahrt.timeStart,
+      timeEnd:   document.getElementById('f-time-end').value,
+      fahrer:    offeneFahrt.fahrer,
+      mitfahrer: offeneFahrt.mitfahrer,
+      bemerkung,
+      tankstopps,
+      gesamtLiter,
+      verbrauch
+    };
 
-  fahrten.unshift(fahrt);
-  save();
-  offeneFahrt = null;
-  saveOffen();
-  resetAnkunft();
-  renderNeuPage();
-  showToast('✦ Fahrt vollständig gespeichert!');
+    fahrten.unshift(fahrt);
+    saveFahrtenLocal(); // local first — instant, never fails
+
+    offeneFahrt = null;
+    saveOffenLocal();   // local first
+
+    // UI sofort aktualisieren — renderNeuPage zuerst, dann reset
+    renderNeuPage();
+    resetAnkunft();
+    showToast('✦ Fahrt gespeichert!');
+
+    // GitHub sync im Hintergrund — blockiert NIE die UI
+    if (ghConfig) {
+      saveToGitHub().then(ok => {
+        if (ok) showToast('☁ GitHub synchronisiert.');
+      }).catch(e => console.warn('GitHub sync:', e));
+    }
+
+  } catch(err) {
+    console.error('Ankunft speichern Fehler:', err);
+    showToast('⚠ Fehler: ' + err.message);
+  }
 });
 
 function resetAbfahrt() {
@@ -1525,14 +1560,21 @@ function resetAbfahrt() {
 }
 
 function resetAnkunft() {
-  document.getElementById('ankunft-form').reset();
-  document.getElementById('tank-list').innerHTML = '';
-  tankCounter = 0;
-  // Ankunftszeit = jetzt
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2,'0');
-  const mm = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('f-time-end').value = hh + ':' + mm;
+  try {
+    const form = document.getElementById('ankunft-form');
+    if (form) form.reset();
+    const tankList = document.getElementById('tank-list');
+    if (tankList) { tankList.innerHTML = ''; tankCounter = 0; }
+    const timeEnd = document.getElementById('f-time-end');
+    if (timeEnd) {
+      const now = new Date();
+      timeEnd.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    }
+    const bemEnd = document.getElementById('f-bemerkung-end');
+    if (bemEnd) bemEnd.value = '';
+    const kmEnd = document.getElementById('f-km-end');
+    if (kmEnd) kmEnd.value = '';
+  } catch(e) { console.warn('resetAnkunft:', e); }
 }
 
 function cancelOpenTrip() {
@@ -2646,19 +2688,27 @@ async function loadFromGitHub() {
 }
 
 // ── Write to GitHub ──
+// Safely encode UTF-8 string to base64 (handles Umlauts etc.)
+function toBase64(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+    (match, p1) => String.fromCharCode('0x' + p1)));
+}
+
+async function getGitHubSHA() {
+  try {
+    const res = await fetch(ghApiUrl(), { headers: ghHeaders() });
+    if (res.ok) {
+      const data = await res.json();
+      return data.sha || null;
+    }
+  } catch(e) {}
+  return null;
+}
+
 async function saveToGitHub() {
   if (!ghConfig) return false;
   try {
-    setSyncBadge('busy', 'Speichere auf GitHub…');
-    // Get current SHA (needed for update)
-    let sha = null;
-    const getRes = await fetch(ghApiUrl(), { headers: ghHeaders() });
-    if (getRes.ok) {
-      const existing = await getRes.json();
-      sha = existing.sha;
-    } else if (getRes.status !== 404) {
-      throw new Error('HTTP ' + getRes.status);
-    }
+    setSyncBadge('busy', 'Sync…');
 
     const payload = {
       fahrten,
@@ -2666,9 +2716,14 @@ async function saveToGitHub() {
       offeneFahrt,
       lastSync: new Date().toISOString()
     };
+    const jsonStr = JSON.stringify(payload, null, 2);
+
+    // Always fetch fresh SHA to avoid 409 conflicts
+    const sha = await getGitHubSHA();
+
     const body = {
-      message: 'Fahrtenbuch Update ' + new Date().toLocaleDateString('de-AT'),
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2)))),
+      message: 'Update ' + new Date().toLocaleDateString('de-AT'),
+      content: toBase64(jsonStr),
     };
     if (sha) body.sha = sha;
 
@@ -2677,15 +2732,35 @@ async function saveToGitHub() {
       headers: ghHeaders(),
       body: JSON.stringify(body)
     });
-    if (!putRes.ok) {
-      const err = await putRes.json();
-      throw new Error(err.message || 'HTTP ' + putRes.status);
+
+    // 409 = SHA conflict (another device saved first) → retry once with fresh SHA
+    if (putRes.status === 409) {
+      console.warn('GitHub 409 conflict, retrying with fresh SHA…');
+      const freshSha = await getGitHubSHA();
+      if (freshSha) body.sha = freshSha;
+      const retry = await fetch(ghApiUrl(), {
+        method: 'PUT',
+        headers: ghHeaders(),
+        body: JSON.stringify(body)
+      });
+      if (!retry.ok) {
+        const errData = await retry.json().catch(() => ({}));
+        throw new Error(errData.message || 'Retry HTTP ' + retry.status);
+      }
+      setSyncBadge('ok', 'Sync: ' + new Date().toLocaleTimeString('de-AT'));
+      return true;
     }
-    setSyncBadge('ok', 'Gespeichert: ' + new Date().toLocaleTimeString('de-AT'));
+
+    if (!putRes.ok) {
+      const errData = await putRes.json().catch(() => ({}));
+      throw new Error(errData.message || 'HTTP ' + putRes.status);
+    }
+
+    setSyncBadge('ok', 'Sync: ' + new Date().toLocaleTimeString('de-AT'));
     return true;
   } catch(e) {
     setSyncBadge('err', 'Fehler: ' + e.message);
-    showToast('⚠ Sync-Fehler: ' + e.message);
+    console.warn('GitHub sync error:', e.message);
     return false;
   }
 }
@@ -2696,17 +2771,21 @@ async function syncNow() {
   const loaded = await loadFromGitHub();
   if (!loaded) return false;
   const saved = await saveToGitHub();
+  if (saved) {
+    renderBuch();
+    if (window.innerWidth <= 767) { mRenderHome(); mRenderBuch(); }
+  }
   return saved;
 }
 
-// ── save() & saveOffen() — lokal + GitHub ──
+// ── save() & saveOffen() — lokal + GitHub (fire-and-forget, UI never blocked) ──
 function save() {
   saveFahrtenLocal();
-  if (ghConfig) saveToGitHub();
+  if (ghConfig) { saveToGitHub().catch(e => console.warn('sync:', e)); }
 }
 function saveOffen() {
   saveOffenLocal();
-  if (ghConfig) saveToGitHub();
+  if (ghConfig) { saveToGitHub().catch(e => console.warn('sync:', e)); }
 }
 
 // ── GitHub Init: load on startup ──
