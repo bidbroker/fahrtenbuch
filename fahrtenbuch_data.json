@@ -103,9 +103,21 @@
     "title": "Buggy",
     "kz": "WU 327AF",
     "vin": "",
-    "motor": "",
-    "sub": "Rot"
+    "motor": "1200er Mexico D1 Motor",
+    "sub": "Rot / Historisch"
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-02-25T22:20:04.797Z"
+  "offeneFahrt": {
+    "id": 1772058145367,
+    "datum": "2026-02-25",
+    "zweck": "sommer",
+    "von": "Gablitz",
+    "bis": "Jesolo",
+    "kmStart": 4,
+    "timeStart": "23:18",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "Andrea",
+    "bemerkung": "wird ein langer weg",
+    "tankstopps": []
+  },
+  "lastSync": "2026-02-25T22:22:25.368Z"
 }
