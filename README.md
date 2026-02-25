@@ -1,2 +1,2 @@
 # fahrtenbuch
-Fahrtenbuch für meinen Oltimer
+Fahrtenbuch für meinen Oldtimer
