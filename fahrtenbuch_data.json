@@ -1,6 +1,32 @@
 {
   "fahrten": [
     {
+      "id": 1772057964189,
+      "datum": "2026-02-25",
+      "zweck": "t1",
+      "von": "Gablitz",
+      "bis": "Purkersdorf",
+      "kmStart": 4,
+      "kmEnd": 6,
+      "strecke": 2,
+      "timeStart": "23:18",
+      "timeEnd": "23:19",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "schnee | fvfbv",
+      "tankstopps": [
+        {
+          "time": "23:19",
+          "ort": "Jet",
+          "km": 2,
+          "liter": 11,
+          "bemerkung": "nix"
+        }
+      ],
+      "gesamtLiter": 11,
+      "verbrauch": "550.0"
+    },
+    {
       "id": 1772057921742,
       "datum": "2026-02-25",
       "zweck": "test11fefge",
@@ -80,26 +106,6 @@
     "motor": "",
     "sub": "Rot"
   },
-  "offeneFahrt": {
-    "id": 1772057964189,
-    "datum": "2026-02-25",
-    "zweck": "t1",
-    "von": "Gablitz",
-    "bis": "Purkersdorf",
-    "kmStart": 4,
-    "timeStart": "23:18",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
-    "bemerkung": "schnee",
-    "tankstopps": [
-      {
-        "time": "23:19",
-        "ort": "Jet",
-        "km": 2,
-        "liter": 11,
-        "bemerkung": "nix"
-      }
-    ]
-  },
-  "lastSync": "2026-02-25T22:19:42.853Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-02-25T22:20:04.797Z"
 }
