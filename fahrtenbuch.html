@@ -1,0 +1,2997 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fahrtenbuch – Oldtimer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --parchment: #ede4cf;
+    --dark: #1c1510;
+    --brown: #5a3e28;
+    --gold: #c8973a;
+    --gold-light: #e8c06a;
+    --red: #8b2020;
+    --border: #b8956a;
+    --shadow: rgba(28,21,16,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Libre Baskerville', Georgia, serif;
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .masthead {
+    background: var(--dark);
+    border-bottom: 4px solid var(--gold);
+    padding: 28px 40px 22px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 10px,
+      rgba(200,151,58,0.04) 10px,
+      rgba(200,151,58,0.04) 20px
+    );
+  }
+  .masthead-inner { position: relative; z-index: 1; }
+  .masthead-rule {
+    display: flex; align-items: center; gap: 16px;
+    justify-content: center; margin-bottom: 8px;
+  }
+  .masthead-rule span { height: 1px; background: var(--gold); flex: 1; max-width: 120px; }
+  .masthead-icon { color: var(--gold); font-size: 22px; }
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--cream);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .masthead-sub {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    color: var(--gold-light);
+    font-size: 14px;
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* ── NAV ── */
+  .nav-bar {
+    background: var(--parchment);
+    border-bottom: 2px solid var(--border);
+    display: flex; justify-content: center; gap: 0;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .nav-btn {
+    background: none; border: none;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 13px; letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--brown);
+    padding: 14px 30px;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    transition: background .2s, color .2s;
+  }
+  .nav-btn:last-child { border-right: none; }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--dark);
+    color: var(--gold);
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 40px; max-width: 960px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--brown);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  /* ── FORM ── */
+  .form-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    box-shadow: 4px 4px 0 var(--parchment), 4px 4px 0 1px var(--border);
+    margin-bottom: 30px;
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--brown);
+    font-weight: 700;
+  }
+  input, textarea, select {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 1px;
+    padding: 10px 14px;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 14px;
+    color: var(--dark);
+    width: 100%;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200,151,58,0.15);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* ── TANK STOPS ── */
+  .tank-section {
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 20px;
+    margin-top: 6px;
+  }
+  .tank-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--brown);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tank-stop {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 1px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+    position: relative;
+  }
+  .btn-remove-tank {
+    background: var(--red);
+    color: white;
+    border: none;
+    width: 34px; height: 34px;
+    border-radius: 1px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .2s;
+  }
+  .btn-remove-tank:hover { opacity: .8; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'Libre Baskerville', serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 1px;
+  }
+  .btn-primary {
+    background: var(--dark);
+    color: var(--gold);
+    border: 2px solid var(--dark);
+  }
+  .btn-primary:hover {
+    background: var(--gold);
+    color: var(--dark);
+    border-color: var(--gold);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--brown);
+    border: 2px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--parchment);
+    border-color: var(--brown);
+  }
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 2px solid var(--red);
+  }
+  .btn-danger:hover {
+    background: var(--red);
+    color: white;
+  }
+  .btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+  /* ── LOGBOOK ENTRIES ── */
+  .entry-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--gold);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 2px 2px 0 var(--parchment), 2px 2px 0 1px var(--border);
+    position: relative;
+  }
+  .entry-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--parchment);
+  }
+  .entry-date {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--brown);
+  }
+  .entry-id {
+    background: var(--dark);
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    font-weight: 700;
+  }
+  .entry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .entry-field label {
+    font-size: 10px;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .entry-field span {
+    font-size: 14px;
+    color: var(--dark);
+  }
+  .entry-fuel {
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .entry-fuel-title {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--brown);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .entry-actions { display: flex; gap: 8px; margin-top: 14px; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-box {
+    background: var(--dark);
+    color: white;
+    padding: 18px 20px;
+    text-align: center;
+    border-bottom: 3px solid var(--gold);
+  }
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--parchment);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ── OPEN TRIP BANNER ── */
+  .open-trip-banner {
+    background: var(--dark);
+    border: 2px solid var(--gold);
+    border-left: 6px solid var(--gold);
+    padding: 20px 28px;
+    margin-bottom: 28px;
+    position: relative;
+    animation: pulse-border 2s infinite;
+  }
+  @keyframes pulse-border {
+    0%, 100% { border-left-color: var(--gold); }
+    50% { border-left-color: var(--gold-light); }
+  }
+  .open-trip-banner .banner-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 18px;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .open-trip-banner .banner-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .open-trip-banner .binfo label {
+    color: var(--gold);
+    font-size: 10px;
+  }
+  .open-trip-banner .binfo span {
+    color: var(--cream);
+    font-size: 14px;
+  }
+
+  /* ── PHASE DIVIDER ── */
+  .phase-header {
+    display: flex; align-items: center; gap: 16px;
+    margin: 28px 0 20px;
+  }
+  .phase-header .phase-badge {
+    background: var(--dark);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 6px 16px;
+    white-space: nowrap;
+    border: 1px solid var(--gold);
+  }
+  .phase-header .phase-line {
+    height: 1px;
+    background: var(--border);
+    flex: 1;
+  }
+
+  /* ── MID-TRIP TANK STOP ── */
+  .midtrip-tank-section {
+    background: var(--dark);
+    border: 2px solid var(--gold);
+    border-radius: 2px;
+    padding: 24px 28px;
+    margin-top: 16px;
+  }
+  .midtrip-tank-section .mt-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 17px;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .midtrip-stop-item {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(200,151,58,0.35);
+    border-radius: 2px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--cream);
+  }
+  .midtrip-stop-item .ts-time { color: var(--gold); font-weight: 700; }
+  .midtrip-stop-item .ts-remove {
+    margin-left: auto;
+    background: var(--red); color: white; border: none;
+    width: 26px; height: 26px; border-radius: 1px;
+    cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .midtrip-add-form {
+    display: grid;
+    grid-template-columns: 80px 1fr 90px 1fr;
+    gap: 10px;
+    align-items: end;
+    margin-top: 14px;
+  }
+  .midtrip-add-form input {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(200,151,58,0.4);
+    color: var(--cream);
+    font-size: 13px;
+  }
+  .midtrip-add-form input::placeholder { color: rgba(245,240,232,0.4); }
+  .midtrip-add-form input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(200,151,58,0.2);
+  }
+  .midtrip-add-form label { color: var(--gold-light); font-size: 10px; }
+  @media (max-width: 600px) {
+    .midtrip-add-form { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── ANKUNFT CARD ── */
+  .ankunft-card {
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 2px;
+    padding: 32px;
+    box-shadow: 4px 4px 0 var(--dark);
+    margin-bottom: 30px;
+  }
+  .ankunft-card .ankunft-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--brown);
+    margin-bottom: 8px;
+  }
+  .ankunft-card .ankunft-sub {
+    font-style: italic;
+    color: var(--border);
+    font-size: 13px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--parchment);
+  }
+
+  /* ── YEAR SELECTOR ── */
+  .year-bar {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 28px;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    flex-wrap: wrap;
+  }
+  .year-btn {
+    background: none; border: none; border-right: 1px solid var(--border);
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--brown);
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    white-space: nowrap;
+  }
+  .year-btn:last-child { border-right: none; }
+  .year-btn:hover { background: var(--parchment); }
+  .year-btn.active {
+    background: var(--dark);
+    color: var(--gold);
+  }
+  .year-label {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--brown);
+    padding: 12px 16px;
+    border-right: 1px solid var(--border);
+    background: var(--parchment);
+    white-space: nowrap;
+  }
+  .year-separator {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold);
+    padding: 8px 16px;
+    background: var(--dark);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--border);
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(28,21,16,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border: 2px solid var(--border);
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px;
+    position: relative;
+    box-shadow: 8px 8px 0 var(--dark);
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--brown);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--dark); color: var(--gold);
+    border: none; width: 30px; height: 30px;
+    font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 1px;
+  }
+
+  /* ── PRINT PAGE ── */
+  .print-header {
+    text-align: center;
+    border: 3px double var(--dark);
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  .print-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--dark);
+  }
+  .print-header p { color: var(--brown); font-style: italic; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--dark); color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 14px 22px;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    z-index: 9999;
+    transform: translateY(80px); opacity: 0;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    .nav-bar, .masthead, #page-neu, #page-buch .entry-actions,
+    .btn, .no-print { display: none !important; }
+    body { background: white; font-size: 12px; }
+    .page { display: block !important; padding: 0; max-width: 100%; }
+    #page-buch { display: block !important; }
+    .entry-card { box-shadow: none; border-left: 3px solid #888; page-break-inside: avoid; }
+    .stat-box { background: white; color: black; border: 1px solid #888; }
+    .stat-val { color: black; }
+    .stat-lbl { color: #555; }
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .tank-stop { grid-template-columns: 1fr 1fr; }
+    .tank-stop .btn-remove-tank { grid-column: 1 / -1; }
+    .nav-btn { padding: 12px 14px; font-size: 11px; }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     MOBILE LAYOUT — iPhone optimiert
+     Aktiv bei Breite ≤ 767px
+  ══════════════════════════════════════════════════════ */
+  @media (max-width: 767px) {
+    /* Desktop elemente ausblenden */
+    .masthead, .nav-bar, .page { display: none !important; }
+
+    /* Mobile Shell */
+    body { background: #0d0d0f; }
+    #mobile-ui { display: flex !important; }
+  }
+  @media (min-width: 768px) {
+    #mobile-ui { display: none !important; }
+  }
+
+  /* ── MOBILE SHELL ── */
+  #mobile-ui {
+    display: none;
+    flex-direction: column;
+    height: 100dvh;
+    width: 100%;
+    background: #0d0d0f;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    color: #f0ebe0;
+    position: fixed; inset: 0;
+    overflow: hidden;
+  }
+
+  /* ── MOBILE HEADER ── */
+  .m-header {
+    background: #0d0d0f;
+    border-bottom: 1px solid rgba(200,151,58,0.25);
+    padding: 14px 20px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .m-header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: #c8973a;
+    letter-spacing: 1px;
+  }
+  .m-header-sub {
+    font-size: 11px;
+    color: rgba(200,151,58,0.55);
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+  .m-status-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #4caf50;
+    box-shadow: 0 0 8px #4caf50;
+    animation: blink 1.5s infinite;
+  }
+  .m-status-dot.idle { background: #555; box-shadow: none; animation: none; }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+
+  /* ── MOBILE SCREENS (scrollable content area) ── */
+  .m-screen {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px 20px 100px;
+    display: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .m-screen.active { display: block; }
+
+  /* ── BOTTOM NAV ── */
+  .m-bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: #16141a;
+    border-top: 1px solid rgba(200,151,58,0.2);
+    display: flex;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    flex-shrink: 0;
+  }
+  .m-nav-btn {
+    flex: 1; background: none; border: none;
+    color: rgba(200,151,58,0.45);
+    font-family: 'Libre Baskerville', serif;
+    font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 12px 4px 10px;
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    transition: color .2s;
+  }
+  .m-nav-btn .m-nav-icon { font-size: 20px; line-height: 1; }
+  .m-nav-btn.active { color: #c8973a; }
+  .m-nav-btn.active .m-nav-icon {
+    filter: drop-shadow(0 0 6px rgba(200,151,58,0.7));
+  }
+
+  /* ── HOME SCREEN ── */
+  .m-home-status {
+    background: linear-gradient(135deg, #1a1408 0%, #0d0d0f 100%);
+    border: 1px solid rgba(200,151,58,0.3);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .m-km-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    color: #c8973a;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .m-km-label {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(200,151,58,0.5);
+    margin-top: 4px;
+  }
+
+  /* ── BIG ACTION BUTTON ── */
+  .m-big-btn {
+    width: 100%;
+    background: #c8973a;
+    color: #0d0d0f;
+    border: none; border-radius: 14px;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; letter-spacing: 1px;
+    padding: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    transition: transform .12s, background .2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .m-big-btn:active { transform: scale(0.97); background: #e8b050; }
+  .m-big-btn.secondary {
+    background: transparent;
+    color: #c8973a;
+    border: 2px solid rgba(200,151,58,0.4);
+    font-size: 15px;
+    padding: 16px;
+  }
+  .m-big-btn.danger {
+    background: transparent;
+    color: #c0392b;
+    border: 2px solid rgba(192,57,43,0.4);
+    font-size: 14px; padding: 14px;
+  }
+  .m-big-btn.green {
+    background: #1e6b35;
+    color: #a8e6bc;
+    border: none;
+  }
+  .m-big-btn.green:active { background: #267a40; }
+
+  /* ── FORM FIELDS ── */
+  .m-field {
+    margin-bottom: 16px;
+  }
+  .m-field label {
+    display: block;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(200,151,58,0.7);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .m-field input, .m-field textarea, .m-field select {
+    width: 100%;
+    background: #1a1a20;
+    border: 1.5px solid rgba(200,151,58,0.25);
+    border-radius: 10px;
+    color: #f0ebe0;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 16px; /* prevents iOS zoom */
+    padding: 14px 16px;
+    transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+  .m-field input:focus, .m-field textarea:focus {
+    outline: none;
+    border-color: #c8973a;
+    background: #1e1c26;
+  }
+  .m-field input[type="number"] {
+    font-size: 22px;
+    font-family: 'Playfair Display', serif;
+    color: #c8973a;
+    text-align: center;
+    padding: 16px;
+  }
+  .m-field input[type="time"] {
+    font-size: 28px;
+    font-family: 'Playfair Display', serif;
+    color: #c8973a;
+    text-align: center;
+    padding: 14px;
+    letter-spacing: 2px;
+  }
+  .m-field textarea {
+    font-size: 15px;
+    min-height: 80px; resize: none;
+  }
+  .m-field-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .m-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 24px 0 20px;
+  }
+  .m-divider span {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(200,151,58,0.5);
+    white-space: nowrap;
+  }
+  .m-divider::before, .m-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(200,151,58,0.2);
+  }
+
+  /* ── RUNNING TRIP CARD ── */
+  .m-trip-card {
+    background: linear-gradient(135deg, #1a1408, #0d0d0f);
+    border: 1.5px solid #c8973a;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .m-trip-card .tc-label {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(200,151,58,0.5); margin-bottom: 4px;
+  }
+  .m-trip-card .tc-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; color: #f0ebe0;
+  }
+  .m-trip-card .tc-route {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; color: #c8973a;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .m-trip-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .m-trip-grid .tc-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px; padding: 10px 12px;
+  }
+
+  /* ── TANK STOP LIST (mobile) ── */
+  .m-tank-item {
+    background: rgba(200,151,58,0.08);
+    border: 1px solid rgba(200,151,58,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 10px;
+  }
+  .m-tank-item .ti-info { flex: 1; }
+  .m-tank-item .ti-time {
+    font-family: 'Playfair Display', serif;
+    color: #c8973a; font-size: 16px;
+  }
+  .m-tank-item .ti-detail { font-size: 13px; color: rgba(240,235,224,0.7); margin-top: 3px; }
+  .m-tank-item .ti-note { font-size: 12px; color: rgba(200,151,58,0.6); font-style: italic; margin-top: 3px; }
+  .m-tank-del {
+    background: rgba(192,57,43,0.2); border: 1px solid rgba(192,57,43,0.3);
+    color: #c0392b; border-radius: 8px;
+    width: 34px; height: 34px; flex-shrink: 0;
+    font-size: 18px; cursor: pointer; border: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── LOGBOOK MOBILE ── */
+  .m-entry {
+    background: #16141a;
+    border: 1px solid rgba(200,151,58,0.2);
+    border-left: 4px solid #c8973a;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .m-entry .me-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .m-entry .me-date {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; color: #c8973a;
+  }
+  .m-entry .me-nr {
+    font-size: 10px; letter-spacing: 1px;
+    color: rgba(200,151,58,0.5); padding-top: 3px;
+  }
+  .m-entry .me-route { font-size: 13px; color: rgba(240,235,224,0.7); margin-bottom: 6px; }
+  .m-entry .me-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+  .m-entry .me-stat { font-size: 12px; }
+  .m-entry .me-stat strong { color: #c8973a; }
+  .m-year-tabs {
+    display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px;
+    padding-bottom: 4px; scrollbar-width: none;
+  }
+  .m-year-tabs::-webkit-scrollbar { display: none; }
+  .m-ytab {
+    background: #1a1a20; border: 1.5px solid rgba(200,151,58,0.25);
+    color: rgba(200,151,58,0.6); border-radius: 20px;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; padding: 8px 20px; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0;
+    transition: all .2s;
+  }
+  .m-ytab.active { background: #c8973a; color: #0d0d0f; border-color: #c8973a; }
+
+  /* ── MOBILE STATS ── */
+  .m-stats-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
+  }
+  .m-stat-box {
+    background: #1a1408;
+    border: 1px solid rgba(200,151,58,0.2);
+    border-radius: 12px; padding: 14px 12px; text-align: center;
+  }
+  .m-stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; color: #c8973a; display: block;
+  }
+  .m-stat-lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(200,151,58,0.5); display: block; margin-top: 3px; }
+
+  /* ── MOBILE EDIT MODAL ── */
+  .m-modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.85);
+    padding: 0;
+    align-items: flex-end;
+  }
+  .m-modal-overlay.open { display: flex; }
+  .m-modal-sheet {
+    background: #16141a;
+    border-top: 2px solid #c8973a;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-height: 92dvh;
+    overflow-y: auto;
+    padding: 24px 20px 40px;
+    -webkit-overflow-scrolling: touch;
+    animation: slideUp .28s cubic-bezier(.34,1.2,.64,1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .m-modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(200,151,58,0.2);
+  }
+  .m-modal-title {
+    font-family: 'Playfair Display', serif;
+    color: #c8973a; font-size: 20px;
+  }
+  .m-modal-close {
+    background: rgba(200,151,58,0.1); border: 1px solid rgba(200,151,58,0.3);
+    color: #c8973a; border-radius: 50%;
+    width: 36px; height: 36px; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Editier-Button in Fahrtenliste */
+  .m-entry-actions {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .m-entry-btn {
+    flex: 1; background: transparent; border-radius: 8px;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 10px 8px; cursor: pointer; text-align: center;
+    transition: background .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .m-entry-btn.edit {
+    border: 1.5px solid rgba(200,151,58,0.35);
+    color: #c8973a;
+  }
+  .m-entry-btn.edit:active { background: rgba(200,151,58,0.1); }
+  .m-entry-btn.del {
+    border: 1.5px solid rgba(192,57,43,0.35);
+    color: #c0392b;
+  }
+  .m-entry-btn.del:active { background: rgba(192,57,43,0.12); }
+
+  /* Tank-Stop items im Edit-Modal */
+  .m-edit-tank-item {
+    background: rgba(200,151,58,0.06);
+    border: 1px solid rgba(200,151,58,0.2);
+    border-radius: 8px; padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .m-edit-tank-item .eti-txt { flex:1; font-size:13px; color:rgba(240,235,224,0.8); }
+  .m-edit-tank-del {
+    background: none; border: none; color: #c0392b;
+    font-size: 20px; cursor: pointer; padding: 0 4px;
+  }
+
+  /* ── SETTINGS MOBILE ── */
+  .m-settings-section {
+    background: #16141a;
+    border: 1px solid rgba(200,151,58,0.15);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .m-settings-section h3 {
+    font-family: 'Playfair Display', serif;
+    color: #c8973a; font-size: 16px; margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(200,151,58,0.15);
+  }
+
+  /* ── SYNC STATUS ── */
+  .sync-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px; font-weight: 700;
+  }
+  .sync-badge.ok  { background: rgba(76,175,80,0.15); color: #4caf50; border: 1px solid rgba(76,175,80,0.3); }
+  .sync-badge.err { background: rgba(192,57,43,0.15); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+  .sync-badge.busy { background: rgba(200,151,58,0.15); color: #c8973a; border: 1px solid rgba(200,151,58,0.3); }
+  .sync-badge.off { background: rgba(255,255,255,0.05); color: #888; border: 1px solid rgba(255,255,255,0.1); }
+  /* desktop */
+  .sync-status-bar {
+    background: var(--parchment);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .sync-status-bar .ss-info { font-size: 13px; color: var(--brown); font-style: italic; }
+
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-rule">
+      <span></span>
+      <span class="masthead-icon">⊛</span>
+      <span></span>
+    </div>
+    <h1 id="car-title">Fahrtenbuch</h1>
+    <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <button class="nav-btn active" onclick="showPage('neu')">✦ Neue Fahrt</button>
+  <button class="nav-btn" onclick="showPage('buch')">📖 Fahrtenbuch</button>
+  <button class="nav-btn" onclick="showPage('einstellungen')">⚙ Einstellungen</button>
+</nav>
+
+<!-- ══════════════════════════════════════ PAGE: NEUE FAHRT ══ -->
+<div class="page active" id="page-neu">
+  <div class="section-title" id="neu-title">✦ Neue Fahrt erfassen</div>
+
+  <!-- Offene Fahrt Banner -->
+  <div id="open-trip-banner" style="display:none"></div>
+
+  <!-- PHASE 1: ABFAHRT -->
+  <div id="abfahrt-section">
+    <div class="phase-header">
+      <span class="phase-badge">① Abfahrt</span>
+      <span class="phase-line"></span>
+    </div>
+    <div class="form-card">
+      <form id="abfahrt-form">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Datum</label>
+            <input type="date" id="f-datum" required>
+          </div>
+
+          <div class="form-group">
+            <label>Abfahrt (Uhrzeit)</label>
+            <input type="time" id="f-time-start" required>
+          </div>
+
+          <div class="form-group">
+            <label>Startort</label>
+            <input type="text" id="f-von" placeholder="Startort" required>
+          </div>
+
+          <div class="form-group">
+            <label>Zielort</label>
+            <input type="text" id="f-bis" placeholder="Zielort" required>
+          </div>
+
+          <div class="form-group">
+            <label>Kilometerstand Beginn (km)</label>
+            <input type="number" id="f-km-start" placeholder="0" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label>Zweck / Bezeichnung</label>
+            <input type="text" id="f-zweck" placeholder="z.B. Sonntagsausfahrt, Treffen …" required>
+          </div>
+
+          <div class="form-group">
+            <label>Fahrer</label>
+            <input type="text" id="f-fahrer" placeholder="Name des Fahrers">
+          </div>
+
+          <div class="form-group">
+            <label>Mitfahrer</label>
+            <input type="text" id="f-mitfahrer" placeholder="Namen der Mitfahrer">
+          </div>
+
+          <div class="form-group form-full">
+            <label>Bemerkungen zur Abfahrt</label>
+            <textarea id="f-bemerkung" placeholder="Wetterbedingungen, Besonderheiten …" style="min-height:60px"></textarea>
+          </div>
+
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn btn-primary">🚗 Abfahrt starten</button>
+          <button type="button" class="btn btn-secondary" onclick="resetAbfahrt()">↺ Leeren</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MID-TRIP: Tankstopp unterwegs -->
+  <div id="midtrip-tank-wrap" style="display:none"></div>
+
+  <!-- PHASE 2: ANKUNFT (nur sichtbar wenn offene Fahrt) -->
+  <div id="ankunft-section" style="display:none">
+    <div class="phase-header">
+      <span class="phase-badge" style="background:var(--gold);color:var(--dark);border-color:var(--gold)">② Ankunft</span>
+      <span class="phase-line"></span>
+    </div>
+    <div class="ankunft-card">
+      <div class="ankunft-title">🏁 Ankunft erfassen</div>
+      <div class="ankunft-sub" id="ankunft-sub">Fahrt läuft …</div>
+      <form id="ankunft-form">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Ankunft (Uhrzeit)</label>
+            <input type="time" id="f-time-end" required>
+          </div>
+
+          <div class="form-group">
+            <label>Kilometerstand Ende (km)</label>
+            <input type="number" id="f-km-end" placeholder="0" min="0" required>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Bemerkungen zur Ankunft</label>
+            <textarea id="f-bemerkung-end" placeholder="Zusätzliche Notizen zur Rückfahrt …" style="min-height:60px"></textarea>
+          </div>
+
+          <!-- Tankstopps werden oben in Echtzeit erfasst -->
+          <div class="form-group form-full">
+            <div id="ankunft-tank-summary" style="font-style:italic;font-size:13px;color:var(--border);padding:8px 0;"></div>
+          </div>
+
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn btn-primary">✦ Ankunft speichern</button>
+          <button type="button" class="btn btn-danger" onclick="cancelOpenTrip()">✕ Fahrt abbrechen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════ PAGE: FAHRTENBUCH ══ -->
+<div class="page" id="page-buch">
+  <div class="section-title">📖 Fahrtenbuch — <span id="buch-year-title" style="color:var(--gold)"></span></div>
+
+  <div id="year-bar-wrap"></div>
+
+  <div class="stats-bar" id="stats-bar"></div>
+
+  <div class="btn-group no-print" style="margin-bottom:24px;">
+    <button class="btn btn-primary" onclick="window.print()">🖨 Drucken</button>
+    <button class="btn btn-secondary" onclick="exportTXT()">💾 Als Textdatei exportieren</button>
+  </div>
+
+  <div id="entries-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════ PAGE: EINSTELLUNGEN ══ -->
+<div class="page" id="page-einstellungen">
+  <div class="section-title">⚙ Einstellungen</div>
+
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Fahrzeugbezeichnung</label>
+        <input type="text" id="s-title" placeholder="z.B. Mercedes 280 SE · 1972">
+      </div>
+      <div class="form-group">
+        <label>Kennzeichen</label>
+        <input type="text" id="s-kz" placeholder="z.B. W 12345">
+      </div>
+      <div class="form-group">
+        <label>Fahrgestellnummer</label>
+        <input type="text" id="s-vin" placeholder="VIN / FIN">
+      </div>
+      <div class="form-group">
+        <label>Motortyp / Hubraum</label>
+        <input type="text" id="s-motor" placeholder="z.B. 2.8L Reihensechszylinder">
+      </div>
+      <div class="form-group form-full">
+        <label>Untertitel / Beschreibung</label>
+        <input type="text" id="s-sub" placeholder="z.B. Baujahr 1972 · British Racing Green">
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="saveSettings()">✦ Speichern</button>
+    </div>
+  </div>
+
+  <!-- GitHub Sync Status Bar -->
+  <div class="sync-status-bar" id="sync-status-bar">
+    <div>
+      <strong style="font-family:'Playfair Display',serif;color:var(--brown);">GitHub Sync</strong>
+      <div class="ss-info" id="sync-status-text">Nicht konfiguriert — Daten werden nur lokal gespeichert.</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span class="sync-badge off" id="sync-badge">● Offline</span>
+      <button class="btn btn-secondary" style="padding:8px 16px;font-size:11px;" onclick="syncNow()">↺ Jetzt sync</button>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3 style="font-family:'Playfair Display',serif;color:var(--brown);margin-bottom:4px;">🔗 GitHub Synchronisation</h3>
+    <p style="font-size:13px;color:var(--brown);margin-bottom:20px;font-style:italic;">
+      Fahrtdaten werden automatisch in Ihrem GitHub-Repository als JSON-Datei gespeichert — auf allen Geräten verfügbar.
+    </p>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>GitHub Benutzername</label>
+        <input type="text" id="s-gh-user" placeholder="z.B. chrisrapberger">
+      </div>
+      <div class="form-group">
+        <label>Repository Name</label>
+        <input type="text" id="s-gh-repo" placeholder="z.B. fahrtenbuch">
+      </div>
+      <div class="form-group form-full">
+        <label>Personal Access Token (PAT)</label>
+        <input type="password" id="s-gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        <small style="color:var(--border);font-size:11px;margin-top:4px;">
+          github.com → Settings → Developer settings → Personal access tokens → Fine-grained → <strong>Contents: Read &amp; Write</strong>
+        </small>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="saveGitHubSettings()">✦ Verbinden &amp; testen</button>
+      <button class="btn btn-secondary" onclick="syncNow()">↺ Manuell synchronisieren</button>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3 style="font-family:'Playfair Display',serif;color:var(--brown);margin-bottom:16px;">📂 Datenverwaltung</h3>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="exportTXT()">💾 Textdatei exportieren</button>
+      <button class="btn btn-danger" onclick="clearAll()">⚠ Jahrgang löschen</button>
+      <button class="btn btn-danger" onclick="clearAllYears()">⚠ Alle Jahre löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ EDIT MODAL ══ -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">✏ Fahrt bearbeiten</div>
+    <form id="edit-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Datum</label>
+          <input type="date" id="e-datum" required>
+        </div>
+        <div class="form-group">
+          <label>Zweck / Bezeichnung</label>
+          <input type="text" id="e-zweck" required>
+        </div>
+        <div class="form-group">
+          <label>Startort</label>
+          <input type="text" id="e-von" required>
+        </div>
+        <div class="form-group">
+          <label>Zielort</label>
+          <input type="text" id="e-bis" required>
+        </div>
+        <div class="form-group">
+          <label>KM-Stand Beginn</label>
+          <input type="number" id="e-km-start" required>
+        </div>
+        <div class="form-group">
+          <label>KM-Stand Ende</label>
+          <input type="number" id="e-km-end" required>
+        </div>
+        <div class="form-group">
+          <label>Abfahrt</label>
+          <input type="time" id="e-time-start">
+        </div>
+        <div class="form-group">
+          <label>Ankunft</label>
+          <input type="time" id="e-time-end">
+        </div>
+        <div class="form-group">
+          <label>Fahrer</label>
+          <input type="text" id="e-fahrer">
+        </div>
+        <div class="form-group">
+          <label>Mitfahrer</label>
+          <input type="text" id="e-mitfahrer">
+        </div>
+        <div class="form-group form-full">
+          <label>Bemerkungen</label>
+          <textarea id="e-bemerkung"></textarea>
+        </div>
+        <div class="form-group form-full">
+          <label>Tankstopps</label>
+          <div class="tank-section">
+            <h3>⛽ Tankstopps</h3>
+            <div id="edit-tank-list"></div>
+            <button type="button" class="btn btn-secondary" onclick="addEditTankStop()">+ Tankstopp hinzufügen</button>
+          </div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button type="submit" class="btn btn-primary">✦ Änderungen speichern</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Abbrechen</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════ DATA ═══════════════════════════════
+let fahrten = JSON.parse(localStorage.getItem('fahrtenbuch_fahrten') || '[]');
+let settings = JSON.parse(localStorage.getItem('fahrtenbuch_settings') || '{}');
+let offeneFahrt = JSON.parse(localStorage.getItem('fahrtenbuch_offen') || 'null');
+let editingId = null;
+let tankCounter = 0;
+let editTankCounter = 0;
+let selectedYear = new Date().getFullYear();
+
+function save() {
+  localStorage.setItem('fahrtenbuch_fahrten', JSON.stringify(fahrten));
+}
+
+function saveOffen() {
+  if (offeneFahrt)
+    localStorage.setItem('fahrtenbuch_offen', JSON.stringify(offeneFahrt));
+  else
+    localStorage.removeItem('fahrtenbuch_offen');
+}
+
+// ═══════════════════════════════ YEAR HELPERS ═══════════════════════════════
+function getYears() {
+  const years = [...new Set(fahrten.map(f => f.datum ? f.datum.split('-')[0] : null).filter(Boolean))];
+  years.sort((a, b) => b - a);
+  const currentYear = String(new Date().getFullYear());
+  if (!years.includes(currentYear)) years.unshift(currentYear);
+  return years;
+}
+
+function getFahrtenForYear(year) {
+  return fahrten.filter(f => f.datum && f.datum.startsWith(year));
+}
+
+// ═══════════════════════════════ NAVIGATION ═══════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(name === 'buch' ? 'buch' : name === 'neu' ? 'fahrt' : 'einst'))
+      b.classList.add('active');
+  });
+  if (name === 'buch') renderBuch();
+  if (name === 'einstellungen') loadSettings();
+}
+
+// ═══════════════════════════════ TOAST ═══════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════ TANK STOPS ═══════════════════════════════
+function tankStopHTML(idPrefix, counter, data = {}) {
+  return `
+    <div class="tank-stop" id="${idPrefix}-stop-${counter}">
+      <div class="form-group">
+        <label>Ort</label>
+        <input type="text" class="ts-ort" placeholder="Tankstelle / Ort" value="${data.ort || ''}">
+      </div>
+      <div class="form-group">
+        <label>KM-Stand</label>
+        <input type="number" class="ts-km" placeholder="km" min="0" value="${data.km || ''}">
+      </div>
+      <div class="form-group">
+        <label>Getankt (Liter)</label>
+        <input type="number" class="ts-liter" placeholder="L" step="0.01" min="0" value="${data.liter || ''}">
+      </div>
+      <button type="button" class="btn-remove-tank" onclick="removeTankStop('${idPrefix}-stop-${counter}')">×</button>
+    </div>`;
+}
+
+function addTankStop(data = {}) {
+  document.getElementById('tank-list').insertAdjacentHTML('beforeend',
+    tankStopHTML('ts', ++tankCounter, data));
+}
+
+function addEditTankStop(data = {}) {
+  document.getElementById('edit-tank-list').insertAdjacentHTML('beforeend',
+    tankStopHTML('ets', ++editTankCounter, data));
+}
+
+function removeTankStop(id) {
+  document.getElementById(id)?.remove();
+}
+
+function collectTankStops(listId) {
+  const stops = [];
+  document.getElementById(listId).querySelectorAll('.tank-stop').forEach(el => {
+    const ort = el.querySelector('.ts-ort').value.trim();
+    const km = parseFloat(el.querySelector('.ts-km').value) || 0;
+    const liter = parseFloat(el.querySelector('.ts-liter').value) || 0;
+    if (ort || km || liter) stops.push({ ort, km, liter });
+  });
+  return stops;
+}
+
+// ═══════════════════════════════ FORM SUBMIT — 2-PHASEN ═══════════════════════════════
+
+// PHASE 1: Abfahrt starten
+document.getElementById('abfahrt-form').addEventListener('submit', e => {
+  e.preventDefault();
+
+  offeneFahrt = {
+    id: Date.now(),
+    datum: document.getElementById('f-datum').value,
+    zweck: document.getElementById('f-zweck').value.trim(),
+    von: document.getElementById('f-von').value.trim(),
+    bis: document.getElementById('f-bis').value.trim(),
+    kmStart: parseFloat(document.getElementById('f-km-start').value),
+    timeStart: document.getElementById('f-time-start').value,
+    fahrer: document.getElementById('f-fahrer').value.trim(),
+    mitfahrer: document.getElementById('f-mitfahrer').value.trim(),
+    bemerkung: document.getElementById('f-bemerkung').value.trim(),
+  };
+
+  saveOffen();
+  renderNeuPage();
+  showToast('🚗 Fahrt gestartet! Ankunft nach der Fahrt eintragen.');
+});
+
+// PHASE 2: Ankunft speichern
+document.getElementById('ankunft-form').addEventListener('submit', e => {
+  e.preventDefault();
+  if (!offeneFahrt) return;
+
+  const kmEnd = parseFloat(document.getElementById('f-km-end').value);
+  if (kmEnd < offeneFahrt.kmStart) { showToast('⚠ KM-Ende muss größer als KM-Beginn sein!'); return; }
+
+  const tankstopps = offeneFahrt.tankstopps || [];
+  const gesamtLiter = tankstopps.reduce((s, t) => s + (t.liter||0), 0);
+  const strecke = kmEnd - offeneFahrt.kmStart;
+  const verbrauch = (strecke > 0 && gesamtLiter > 0)
+    ? ((gesamtLiter / strecke) * 100).toFixed(1) : null;
+
+  // Bemerkungen zusammenführen
+  const bemEnd = document.getElementById('f-bemerkung-end').value.trim();
+  const bemerkung = [offeneFahrt.bemerkung, bemEnd].filter(Boolean).join(' | ');
+
+  const fahrt = {
+    ...offeneFahrt,
+    kmEnd,
+    strecke,
+    timeEnd: document.getElementById('f-time-end').value,
+    bemerkung,
+    tankstopps,
+    gesamtLiter,
+    verbrauch
+  };
+
+  fahrten.unshift(fahrt);
+  save();
+  offeneFahrt = null;
+  saveOffen();
+  resetAnkunft();
+  renderNeuPage();
+  showToast('✦ Fahrt vollständig gespeichert!');
+});
+
+function resetAbfahrt() {
+  document.getElementById('abfahrt-form').reset();
+  document.getElementById('f-datum').valueAsDate = new Date();
+  setFormDefaults();
+}
+
+function resetAnkunft() {
+  document.getElementById('ankunft-form').reset();
+  document.getElementById('tank-list').innerHTML = '';
+  tankCounter = 0;
+  // Ankunftszeit = jetzt
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('f-time-end').value = hh + ':' + mm;
+}
+
+function cancelOpenTrip() {
+  if (!confirm('Laufende Fahrt wirklich abbrechen? Die Abfahrtsdaten gehen verloren.')) return;
+  offeneFahrt = null;
+  saveOffen();
+  renderNeuPage();
+  showToast('Fahrt wurde abgebrochen.');
+}
+
+// ══ Render Neu-Page je nach Zustand ══
+function renderNeuPage() {
+  const hasoffen = !!offeneFahrt;
+  const titleEl = document.getElementById('neu-title');
+  const bannerEl = document.getElementById('open-trip-banner');
+  const abfahrtSec = document.getElementById('abfahrt-section');
+  const ankunftSec = document.getElementById('ankunft-section');
+  const midtripWrap = document.getElementById('midtrip-tank-wrap');
+
+  if (hasoffen) {
+    titleEl.textContent = '🚗 Fahrt läuft …';
+
+    // ── Banner ──
+    bannerEl.style.display = 'block';
+    bannerEl.innerHTML =
+      '<div class="open-trip-banner">' +
+        '<div class="banner-title">🚗 Fahrt läuft — ' + offeneFahrt.von + ' → ' + offeneFahrt.bis + '</div>' +
+        '<div class="banner-info">' +
+          '<div class="binfo"><label>Datum</label><span>' + formatDate(offeneFahrt.datum) + '</span></div>' +
+          '<div class="binfo"><label>Abfahrt</label><span>' + (offeneFahrt.timeStart || '—') + ' Uhr</span></div>' +
+          '<div class="binfo"><label>KM-Beginn</label><span>' + offeneFahrt.kmStart.toLocaleString('de-AT') + ' km</span></div>' +
+          '<div class="binfo"><label>Zweck</label><span>' + offeneFahrt.zweck + '</span></div>' +
+          (offeneFahrt.fahrer ? '<div class="binfo"><label>Fahrer</label><span>' + offeneFahrt.fahrer + '</span></div>' : '') +
+        '</div>' +
+      '</div>';
+
+    // ── Mid-Trip Tankstopp-Bereich ──
+    midtripWrap.style.display = 'block';
+    renderMidtripTanks();
+
+    // ── Ankunft-Sub-Text ──
+    document.getElementById('ankunft-sub').textContent =
+      offeneFahrt.von + ' → ' + offeneFahrt.bis +
+      ' · Gestartet ' + (offeneFahrt.timeStart || '') +
+      ' Uhr · KM-Start: ' + offeneFahrt.kmStart.toLocaleString('de-AT');
+
+    // ── Ankunftszeit vorbelegen ──
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('f-time-end').value = hh + ':' + mm;
+
+    // ── Tankstopp-Zusammenfassung im Ankunfts-Formular ──
+    const tanks = offeneFahrt.tankstopps || [];
+    const sumL = tanks.reduce((s,t) => s + (t.liter||0), 0);
+    const summaryEl = document.getElementById('ankunft-tank-summary');
+    if (summaryEl) {
+      summaryEl.textContent = tanks.length > 0
+        ? '⛽ ' + tanks.length + ' Tankstopp' + (tanks.length > 1 ? 's' : '') +
+          ' erfasst — gesamt ' + sumL.toFixed(1) + ' L'
+        : '⛽ Noch keine Tankstopps erfasst.';
+    }
+
+    abfahrtSec.style.display = 'none';
+    ankunftSec.style.display = 'block';
+  } else {
+    titleEl.innerHTML = '✦ Neue Fahrt erfassen';
+    bannerEl.style.display = 'none';
+    midtripWrap.style.display = 'none';
+    abfahrtSec.style.display = 'block';
+    ankunftSec.style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════ MID-TRIP TANKSTOPPS ═══════════════════════════════
+function renderMidtripTanks() {
+  const wrap = document.getElementById('midtrip-tank-wrap');
+  const tanks = offeneFahrt.tankstopps || [];
+
+  const itemsHTML = tanks.length > 0
+    ? tanks.map((t, i) =>
+        '<div class="midtrip-stop-item">' +
+          '<span class="ts-time">⏱ ' + (t.time || '—') + '</span>' +
+          (t.ort ? '<span>📍 ' + t.ort + '</span>' : '') +
+          '<span>⛽ ' + (t.km ? t.km + ' km · ' : '') + t.liter + ' L</span>' +
+          (t.bemerkung ? '<span style="color:var(--gold-light);font-style:italic">📝 ' + t.bemerkung + '</span>' : '') +
+          '<button class="ts-remove" onclick="removeMidtripTank(' + i + ')" title="Löschen">×</button>' +
+        '</div>'
+      ).join('')
+    : '<div style="color:rgba(245,240,232,0.4);font-style:italic;font-size:13px;padding:4px 0;">Noch keine Tankstopps erfasst.</div>';
+
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const curTime = hh + ':' + mm;
+
+  wrap.innerHTML =
+    '<div class="midtrip-tank-section">' +
+      '<div class="mt-title">⛽ Tankstopp unterwegs</div>' +
+      itemsHTML +
+      '<div class="midtrip-add-form" id="midtrip-add-form">' +
+        '<div class="form-group">' +
+          '<label>Uhrzeit</label>' +
+          '<input type="time" id="mt-time" value="' + curTime + '">' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label>Ort / Tankstelle</label>' +
+          '<input type="text" id="mt-ort" placeholder="z.B. OMV Gablitz">' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label>KM-Stand</label>' +
+          '<input type="number" id="mt-km" placeholder="km" min="0">' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label>Liter</label>' +
+          '<input type="number" id="mt-liter" placeholder="L" step="0.01" min="0">' +
+        '</div>' +
+        '<div class="form-group" style="grid-column:1/-1">' +
+          '<label>Bemerkung (z.B. Bleizusatzmittel 5ml)</label>' +
+          '<input type="text" id="mt-bemerkung" placeholder="z.B. Bleizusatzmittel 5ml, Super 98 …">' +
+        '</div>' +
+      '</div>' +
+      '<div class="btn-group" style="margin-top:14px">' +
+        '<button class="btn btn-primary" style="font-size:12px;padding:10px 20px" onclick="addMidtripTank()">⛽ Tankstopp speichern</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function addMidtripTank() {
+  const liter = parseFloat(document.getElementById('mt-liter').value);
+  if (!liter || liter <= 0) { showToast('⚠ Bitte Literzahl eingeben!'); return; }
+
+  const stop = {
+    time: document.getElementById('mt-time').value,
+    ort:  document.getElementById('mt-ort').value.trim(),
+    km:   parseFloat(document.getElementById('mt-km').value) || 0,
+    liter,
+    bemerkung: document.getElementById('mt-bemerkung').value.trim()
+  };
+
+  if (!offeneFahrt.tankstopps) offeneFahrt.tankstopps = [];
+  offeneFahrt.tankstopps.push(stop);
+  saveOffen();
+  renderNeuPage();
+  showToast('⛽ Tankstopp gespeichert!');
+}
+
+function removeMidtripTank(idx) {
+  if (!confirm('Tankstopp löschen?')) return;
+  offeneFahrt.tankstopps.splice(idx, 1);
+  saveOffen();
+  renderNeuPage();
+}
+
+// Legacy alias (used in edit save)
+function resetForm() {
+  resetAbfahrt();
+}
+
+// ═══════════════════════════════ RENDER BUCH ═══════════════════════════════
+function renderBuch() {
+  const list = document.getElementById('entries-list');
+  const stats = document.getElementById('stats-bar');
+  const yearBarWrap = document.getElementById('year-bar-wrap');
+  const yearTitleEl = document.getElementById('buch-year-title');
+
+  // Year tabs
+  const years = getYears();
+  if (!years.includes(String(selectedYear))) selectedYear = parseInt(years[0]);
+  yearTitleEl.textContent = selectedYear;
+
+  yearBarWrap.innerHTML = `
+    <div class="year-bar no-print">
+      <span class="year-label">Jahrgang</span>
+      ${years.map(y => `
+        <button class="year-btn ${String(y) === String(selectedYear) ? 'active' : ''}"
+          onclick="selectYear(${y})">${y}</button>
+      `).join('')}
+    </div>`;
+
+  const jahresFahrten = getFahrtenForYear(String(selectedYear));
+
+  if (jahresFahrten.length === 0) {
+    list.innerHTML = `<div class="empty-state">Keine Fahrten für ${selectedYear} erfasst.<br>Neue Fahrt hinzufügen oder ein anderes Jahr wählen.</div>`;
+    stats.innerHTML = '';
+    return;
+  }
+
+  // Stats für dieses Jahr
+  const totalKm = jahresFahrten.reduce((s, f) => s + (f.strecke || 0), 0);
+  const totalLiter = jahresFahrten.reduce((s, f) => s + (f.gesamtLiter || 0), 0);
+  const avgVerbrauch = (totalKm > 0 && totalLiter > 0)
+    ? ((totalLiter / totalKm) * 100).toFixed(1) : '—';
+
+  stats.innerHTML = `
+    <div class="stat-box">
+      <span class="stat-val">${jahresFahrten.length}</span>
+      <span class="stat-lbl">Fahrten ${selectedYear}</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-val">${totalKm.toLocaleString('de-AT')} km</span>
+      <span class="stat-lbl">Kilometer ${selectedYear}</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-val">${totalLiter.toFixed(1)} L</span>
+      <span class="stat-lbl">Kraftstoff ${selectedYear}</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-val">${avgVerbrauch} L/100</span>
+      <span class="stat-lbl">Ø Verbrauch</span>
+    </div>`;
+
+  // Fahrten-Nummerierung pro Jahr: neueste = höchste Nummer
+  const total = jahresFahrten.length;
+  list.innerHTML = jahresFahrten.map((f, idx) => {
+    const nr = total - idx; // Fahrt 1 = älteste des Jahres
+    const tankHTML = f.tankstopps && f.tankstopps.length > 0 ? `
+      <div class="entry-fuel">
+        <div class="entry-fuel-title">⛽ Tankstopps</div>
+        ${f.tankstopps.map(t =>
+          `<span style="margin-right:16px">${t.ort ? t.ort + ' · ' : ''}${t.km ? t.km + ' km · ' : ''}${t.liter} L</span>`
+        ).join('')}
+        <strong style="margin-left:8px">| Gesamt: ${f.gesamtLiter.toFixed(1)} L</strong>
+        ${f.verbrauch ? `· <strong>Ø ${f.verbrauch} L/100km</strong>` : ''}
+      </div>` : '';
+
+    return `
+      <div class="entry-card" id="entry-${f.id}">
+        <div class="entry-header">
+          <div class="entry-date">${formatDate(f.datum)} — ${f.zweck}</div>
+          <div class="entry-id">Fahrt ${selectedYear}–${String(nr).padStart(2,'0')}</div>
+        </div>
+        <div class="entry-grid">
+          <div class="entry-field"><label>Route</label><span>${f.von} → ${f.bis}</span></div>
+          <div class="entry-field"><label>KM-Beginn</label><span>${f.kmStart.toLocaleString('de-AT')} km</span></div>
+          <div class="entry-field"><label>KM-Ende</label><span>${f.kmEnd.toLocaleString('de-AT')} km</span></div>
+          <div class="entry-field"><label>Strecke</label><span>${f.strecke.toLocaleString('de-AT')} km</span></div>
+          ${f.timeStart ? `<div class="entry-field"><label>Abfahrt</label><span>${f.timeStart} Uhr</span></div>` : ''}
+          ${f.timeEnd ? `<div class="entry-field"><label>Ankunft</label><span>${f.timeEnd} Uhr</span></div>` : ''}
+          ${f.fahrer ? `<div class="entry-field"><label>Fahrer</label><span>${f.fahrer}</span></div>` : ''}
+          ${f.mitfahrer ? `<div class="entry-field"><label>Mitfahrer</label><span>${f.mitfahrer}</span></div>` : ''}
+        </div>
+        ${f.bemerkung ? `<div style="font-style:italic;font-size:14px;color:var(--brown);margin-top:8px">📝 ${f.bemerkung}</div>` : ''}
+        ${tankHTML}
+        <div class="entry-actions no-print">
+          <button class="btn btn-secondary" style="font-size:11px;padding:8px 16px" onclick="editFahrt(${f.id})">✏ Bearbeiten</button>
+          <button class="btn btn-danger" style="font-size:11px;padding:8px 16px" onclick="deleteFahrt(${f.id})">✕ Löschen</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectYear(year) {
+  selectedYear = parseInt(year);
+  renderBuch();
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const [y, m, day] = d.split('-');
+  return `${day}.${m}.${y}`;
+}
+
+// ═══════════════════════════════ EDIT ═══════════════════════════════
+function editFahrt(id) {
+  const f = fahrten.find(x => x.id === id);
+  if (!f) return;
+  editingId = id;
+  editTankCounter = 0;
+
+  document.getElementById('e-datum').value = f.datum;
+  document.getElementById('e-zweck').value = f.zweck;
+  document.getElementById('e-von').value = f.von;
+  document.getElementById('e-bis').value = f.bis;
+  document.getElementById('e-km-start').value = f.kmStart;
+  document.getElementById('e-km-end').value = f.kmEnd;
+  document.getElementById('e-time-start').value = f.timeStart || '';
+  document.getElementById('e-time-end').value = f.timeEnd || '';
+  document.getElementById('e-fahrer').value = f.fahrer || '';
+  document.getElementById('e-mitfahrer').value = f.mitfahrer || '';
+  document.getElementById('e-bemerkung').value = f.bemerkung || '';
+
+  document.getElementById('edit-tank-list').innerHTML = '';
+  (f.tankstopps || []).forEach(t => addEditTankStop(t));
+
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+document.getElementById('edit-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const idx = fahrten.findIndex(x => x.id === editingId);
+  if (idx === -1) return;
+
+  const kmStart = parseFloat(document.getElementById('e-km-start').value);
+  const kmEnd = parseFloat(document.getElementById('e-km-end').value);
+  const tankstopps = collectTankStops('edit-tank-list');
+  const gesamtLiter = tankstopps.reduce((s, t) => s + t.liter, 0);
+  const strecke = kmEnd - kmStart;
+  const verbrauch = (strecke > 0 && gesamtLiter > 0)
+    ? ((gesamtLiter / strecke) * 100).toFixed(1) : null;
+
+  fahrten[idx] = {
+    ...fahrten[idx],
+    datum: document.getElementById('e-datum').value,
+    zweck: document.getElementById('e-zweck').value.trim(),
+    von: document.getElementById('e-von').value.trim(),
+    bis: document.getElementById('e-bis').value.trim(),
+    kmStart, kmEnd, strecke,
+    timeStart: document.getElementById('e-time-start').value,
+    timeEnd: document.getElementById('e-time-end').value,
+    fahrer: document.getElementById('e-fahrer').value.trim(),
+    mitfahrer: document.getElementById('e-mitfahrer').value.trim(),
+    bemerkung: document.getElementById('e-bemerkung').value.trim(),
+    tankstopps, gesamtLiter, verbrauch
+  };
+
+  save();
+  closeModal();
+  renderBuch();
+  showToast('✦ Fahrt wurde aktualisiert!');
+});
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  editingId = null;
+}
+
+// Click outside to close
+document.getElementById('edit-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// ═══════════════════════════════ DELETE ═══════════════════════════════
+function deleteFahrt(id) {
+  if (!confirm('Fahrt wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) return;
+  fahrten = fahrten.filter(f => f.id !== id);
+  save();
+  renderBuch();
+  showToast('Fahrt wurde gelöscht.');
+}
+
+// ═══════════════════════════════ EXPORT TXT ═══════════════════════════════
+function exportTXT() {
+  const jahresFahrten = getFahrtenForYear(String(selectedYear));
+  if (jahresFahrten.length === 0) { showToast(`Keine Fahrten für ${selectedYear} vorhanden.`); return; }
+
+  const s = settings;
+  const total = jahresFahrten.length;
+  let txt = '';
+  txt += '═'.repeat(60) + '\n';
+  txt += `  FAHRTENBUCH ${selectedYear}${s.title ? ' – ' + s.title.toUpperCase() : ''}\n`;
+  if (s.kz) txt += `  Kennzeichen: ${s.kz}\n`;
+  if (s.vin) txt += `  FIN/VIN: ${s.vin}\n`;
+  if (s.motor) txt += `  Motor: ${s.motor}\n`;
+  txt += `  Erstellt am: ${new Date().toLocaleDateString('de-AT')}\n`;
+  txt += '═'.repeat(60) + '\n\n';
+
+  const totalKm = jahresFahrten.reduce((s, f) => s + (f.strecke || 0), 0);
+  const totalLiter = jahresFahrten.reduce((s, f) => s + (f.gesamtLiter || 0), 0);
+  txt += `JAHRESÜBERSICHT ${selectedYear}\n`;
+  txt += '─'.repeat(40) + '\n';
+  txt += `Fahrten gesamt:     ${total}\n`;
+  txt += `Kilometer gesamt:   ${totalKm.toLocaleString('de-AT')} km\n`;
+  txt += `Kraftstoff gesamt:  ${totalLiter.toFixed(1)} L\n`;
+  if (totalKm > 0 && totalLiter > 0)
+    txt += `Ø Verbrauch:        ${((totalLiter / totalKm) * 100).toFixed(1)} L/100km\n`;
+  txt += '\n\n';
+
+  [...jahresFahrten].reverse().forEach((f, i) => {
+    const nr = i + 1;
+    txt += '─'.repeat(60) + '\n';
+    txt += `FAHRT ${selectedYear}-${String(nr).padStart(2,'0')}: ${formatDate(f.datum)} – ${f.zweck.toUpperCase()}\n`;
+    txt += '─'.repeat(60) + '\n';
+    txt += `Route:         ${f.von} → ${f.bis}\n`;
+    txt += `KM-Beginn:     ${f.kmStart.toLocaleString('de-AT')} km\n`;
+    txt += `KM-Ende:       ${f.kmEnd.toLocaleString('de-AT')} km\n`;
+    txt += `Strecke:       ${f.strecke.toLocaleString('de-AT')} km\n`;
+    if (f.timeStart) txt += `Abfahrt:       ${f.timeStart} Uhr\n`;
+    if (f.timeEnd)   txt += `Ankunft:       ${f.timeEnd} Uhr\n`;
+    if (f.fahrer)    txt += `Fahrer:        ${f.fahrer}\n`;
+    if (f.mitfahrer) txt += `Mitfahrer:     ${f.mitfahrer}\n`;
+    if (f.bemerkung) txt += `Bemerkungen:   ${f.bemerkung}\n`;
+    if (f.tankstopps && f.tankstopps.length > 0) {
+      txt += `\nTankstopps:\n`;
+      f.tankstopps.forEach(t => {
+        txt += `  • `;
+        if (t.ort) txt += `${t.ort}  `;
+        if (t.km)  txt += `KM-Stand: ${t.km} km  `;
+        if (t.liter) txt += `Getankt: ${t.liter} L`;
+        txt += '\n';
+      });
+      txt += `  Gesamt getankt: ${f.gesamtLiter.toFixed(1)} L\n`;
+      if (f.verbrauch) txt += `  Ø Verbrauch:   ${f.verbrauch} L/100km\n`;
+    }
+    txt += '\n';
+  });
+
+  txt += '═'.repeat(60) + '\n';
+  txt += `  Ende des Fahrtenbuchs ${selectedYear}\n`;
+  txt += '═'.repeat(60) + '\n';
+
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `fahrtenbuch_${selectedYear}.txt`;
+  a.click();
+  showToast(`✦ Fahrtenbuch ${selectedYear} exportiert!`);
+}
+
+// ═══════════════════════════════ SETTINGS ═══════════════════════════════
+function loadSettings() {
+  document.getElementById('s-title').value = settings.title || '';
+  document.getElementById('s-kz').value = settings.kz || '';
+  document.getElementById('s-vin').value = settings.vin || '';
+  document.getElementById('s-motor').value = settings.motor || '';
+  document.getElementById('s-sub').value = settings.sub || '';
+  loadGitHubSettings();
+}
+
+function saveSettings() {
+  settings = {
+    title: document.getElementById('s-title').value.trim(),
+    kz: document.getElementById('s-kz').value.trim(),
+    vin: document.getElementById('s-vin').value.trim(),
+    motor: document.getElementById('s-motor').value.trim(),
+    sub: document.getElementById('s-sub').value.trim(),
+  };
+  localStorage.setItem('fahrtenbuch_settings', JSON.stringify(settings));
+  applySettings();
+  showToast('✦ Einstellungen gespeichert!');
+}
+
+function applySettings() {
+  if (settings.title) document.getElementById('car-title').textContent = settings.title;
+  if (settings.sub) document.getElementById('car-subtitle').textContent = settings.sub;
+  else if (settings.kz) document.getElementById('car-subtitle').textContent = settings.kz;
+}
+
+function clearAll() {
+  const choice = confirm(
+    `Was möchten Sie löschen?\n\n` +
+    `[OK] → Nur Fahrten aus ${selectedYear} löschen\n` +
+    `[Abbrechen] → Nichts löschen\n\n` +
+    `(Um ALLE Jahre zu löschen, halten Sie Shift beim Klick auf OK)`
+  );
+  if (!choice) return;
+  // shift-key not detectable in confirm — offer via separate flow
+  if (!confirm(`Fahrten des Jahres ${selectedYear} wirklich löschen?`)) return;
+  fahrten = fahrten.filter(f => !f.datum || !f.datum.startsWith(String(selectedYear)));
+  save();
+  renderBuch();
+  showToast(`Fahrten ${selectedYear} wurden gelöscht.`);
+}
+
+function clearAllYears() {
+  if (!confirm('ACHTUNG: Alle Fahrten aller Jahre werden unwiderruflich gelöscht!\n\nSind Sie sicher?')) return;
+  fahrten = [];
+  save();
+  renderBuch();
+  showToast('Alle Daten wurden gelöscht.');
+}
+
+// ═══════════════════════════════ INIT ═══════════════════════════════
+applySettings();
+renderNeuPage();
+setFormDefaults();
+
+function setFormDefaults() {
+  // Nur befüllen wenn kein offener Trip läuft
+  if (offeneFahrt) return;
+
+  document.getElementById('f-datum').valueAsDate = new Date();
+
+  // Startort vorbelegen
+  if (!document.getElementById('f-von').value)
+    document.getElementById('f-von').value = 'Gablitz';
+
+  // Aktuelle Uhrzeit als Abfahrt vorbelegen
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('f-time-start').value = hh + ':' + mm;
+
+  // Fahrer vorbelegen
+  if (!document.getElementById('f-fahrer').value)
+    document.getElementById('f-fahrer').value = 'Christian Rapberger';
+
+  // KM-Stand Beginn = KM-Stand Ende der allerletzten Fahrt
+  if (fahrten.length > 0) {
+    const sorted = [...fahrten].sort((a, b) => {
+      if (a.datum > b.datum) return -1;
+      if (a.datum < b.datum) return 1;
+      return b.id - a.id;
+    });
+    const letzteKmEnde = sorted[0].kmEnd;
+    if (letzteKmEnde) {
+      document.getElementById('f-km-start').value = letzteKmEnde;
+      document.getElementById('f-km-start').placeholder = letzteKmEnde + ' km';
+    }
+  }
+}
+
+
+// ══════════════════════════════════════════════════════
+//  MOBILE UI — JavaScript
+// ══════════════════════════════════════════════════════
+
+function mNav(screen) {
+  document.querySelectorAll('.m-screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.m-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('m-screen-' + screen).classList.add('active');
+  document.getElementById('m-nav-' + screen).classList.add('active');
+  if (screen === 'home') mRenderHome();
+  if (screen === 'buch') mRenderBuch();
+  if (screen === 'settings') mLoadSettings();
+}
+
+// ── HOME ──
+function mRenderHome() {
+  const dot = document.getElementById('m-status-dot');
+  const noTrip = document.getElementById('m-no-trip');
+  const openTrip = document.getElementById('m-open-trip');
+
+  if (offeneFahrt) {
+    dot.className = 'm-status-dot';
+    noTrip.style.display = 'none';
+    openTrip.style.display = 'block';
+    document.getElementById('m-header-title').textContent = '🚗 Fahrt läuft …';
+
+    document.getElementById('m-tc-route').textContent = offeneFahrt.von + ' → ' + offeneFahrt.bis;
+    document.getElementById('m-tc-abfahrt').textContent = (offeneFahrt.timeStart || '—') + ' Uhr';
+    document.getElementById('m-tc-km').textContent = offeneFahrt.kmStart.toLocaleString('de-AT') + ' km';
+    document.getElementById('m-tc-zweck').textContent = offeneFahrt.zweck || '—';
+    document.getElementById('m-tc-fahrer').textContent = offeneFahrt.fahrer || '—';
+
+    // Ankunftszeit vorbelegen
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('m-time-end').value = hh + ':' + mm;
+
+    mRenderTankList();
+  } else {
+    dot.className = 'm-status-dot idle';
+    noTrip.style.display = 'block';
+    openTrip.style.display = 'none';
+    document.getElementById('m-header-title').textContent = settings.title || 'Fahrtenbuch';
+    mSetDefaults();
+  }
+}
+
+function mSetDefaults() {
+  // Datum
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  document.getElementById('m-datum').value = yyyy+'-'+mm+'-'+dd;
+
+  // Zeit
+  const hh2 = String(d.getHours()).padStart(2,'0');
+  const mm2 = String(d.getMinutes()).padStart(2,'0');
+  document.getElementById('m-time-start').value = hh2+':'+mm2;
+
+  // Startort
+  const vonEl = document.getElementById('m-von');
+  if (!vonEl.value) vonEl.value = 'Gablitz';
+
+  // Fahrer
+  const fahrerEl = document.getElementById('m-fahrer');
+  if (!fahrerEl.value) fahrerEl.value = 'Christian Rapberger';
+
+  // KM
+  const kmEl = document.getElementById('m-km-start');
+  if (fahrten.length > 0) {
+    const sorted = [...fahrten].sort((a,b) => {
+      if (a.datum > b.datum) return -1;
+      if (a.datum < b.datum) return 1;
+      return b.id - a.id;
+    });
+    if (sorted[0].kmEnd) kmEl.value = sorted[0].kmEnd;
+  }
+
+  // Last km display
+  const kmDisp = document.getElementById('m-last-km');
+  if (fahrten.length > 0) {
+    const sorted = [...fahrten].sort((a,b) => b.id - a.id);
+    kmDisp.textContent = sorted[0].kmEnd ? sorted[0].kmEnd.toLocaleString('de-AT') : '—';
+  } else {
+    kmDisp.textContent = '—';
+  }
+}
+
+// ── ABFAHRT ──
+function mAbfahrtStarten() {
+  const von = document.getElementById('m-von').value.trim();
+  const bis = document.getElementById('m-bis').value.trim();
+  const kmStart = parseFloat(document.getElementById('m-km-start').value);
+  const zweck = document.getElementById('m-zweck').value.trim();
+  const datum = document.getElementById('m-datum').value;
+
+  if (!von || !bis || !kmStart || !zweck || !datum) {
+    showToast('⚠ Bitte alle Pflichtfelder ausfüllen!');
+    return;
+  }
+
+  offeneFahrt = {
+    id: Date.now(),
+    datum,
+    zweck,
+    von,
+    bis,
+    kmStart,
+    timeStart: document.getElementById('m-time-start').value,
+    fahrer: document.getElementById('m-fahrer').value.trim(),
+    mitfahrer: document.getElementById('m-mitfahrer').value.trim(),
+    bemerkung: document.getElementById('m-bemerkung').value.trim(),
+    tankstopps: []
+  };
+  saveOffen();
+
+  // Sync mit Desktop-Formular auch aktualisieren
+  renderNeuPage();
+
+  mRenderHome();
+  showToast('🚗 Abfahrt gestartet!');
+}
+
+// ── TANKSTOPPS ──
+function mRenderTankList() {
+  const list = document.getElementById('m-tank-list');
+  const tanks = offeneFahrt ? (offeneFahrt.tankstopps || []) : [];
+
+  if (tanks.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:rgba(200,151,58,0.35);font-style:italic;margin-bottom:12px;">Noch keine Tankstopps.</div>';
+    return;
+  }
+
+  list.innerHTML = tanks.map((t, i) =>
+    '<div class="m-tank-item">' +
+      '<div class="ti-info">' +
+        '<div class="ti-time">⏱ ' + (t.time || '—') + ' Uhr' + (t.ort ? ' · ' + t.ort : '') + '</div>' +
+        '<div class="ti-detail">' + (t.km ? t.km + ' km · ' : '') + t.liter + ' L</div>' +
+        (t.bemerkung ? '<div class="ti-note">📝 ' + t.bemerkung + '</div>' : '') +
+      '</div>' +
+      '<button class="m-tank-del" onclick="mDelTank(' + i + ')">×</button>' +
+    '</div>'
+  ).join('');
+}
+
+function mShowTankForm() {
+  const form = document.getElementById('m-tank-form');
+  form.style.display = 'block';
+  // Aktuelle Zeit vorbelegen
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('m-ts-time').value = hh+':'+mm;
+  document.getElementById('m-ts-liter').value = '';
+  document.getElementById('m-ts-km').value = '';
+  document.getElementById('m-ts-ort').value = '';
+  document.getElementById('m-ts-bem').value = '';
+  document.getElementById('m-ts-liter').focus();
+}
+
+function mHideTankForm() {
+  document.getElementById('m-tank-form').style.display = 'none';
+}
+
+function mSaveTank() {
+  const liter = parseFloat(document.getElementById('m-ts-liter').value);
+  if (!liter || liter <= 0) { showToast('⚠ Bitte Literzahl eingeben!'); return; }
+
+  const stop = {
+    time: document.getElementById('m-ts-time').value,
+    ort:  document.getElementById('m-ts-ort').value.trim(),
+    km:   parseFloat(document.getElementById('m-ts-km').value) || 0,
+    liter,
+    bemerkung: document.getElementById('m-ts-bem').value.trim()
+  };
+
+  if (!offeneFahrt.tankstopps) offeneFahrt.tankstopps = [];
+  offeneFahrt.tankstopps.push(stop);
+  saveOffen();
+  mHideTankForm();
+  mRenderTankList();
+
+  // Sync Desktop
+  renderNeuPage();
+
+  showToast('⛽ Tankstopp gespeichert!');
+}
+
+function mDelTank(idx) {
+  if (!confirm('Tankstopp löschen?')) return;
+  offeneFahrt.tankstopps.splice(idx, 1);
+  saveOffen();
+  mRenderTankList();
+  renderNeuPage();
+}
+
+// ── ANKUNFT ──
+function mAnkunftSpeichern() {
+  if (!offeneFahrt) return;
+  const kmEnd = parseFloat(document.getElementById('m-km-end').value);
+  if (!kmEnd || kmEnd <= 0) { showToast('⚠ Bitte KM-Stand Ende eingeben!'); return; }
+  if (kmEnd < offeneFahrt.kmStart) { showToast('⚠ KM-Ende muss größer als KM-Beginn sein!'); return; }
+
+  const tankstopps = offeneFahrt.tankstopps || [];
+  const gesamtLiter = tankstopps.reduce((s,t) => s+(t.liter||0), 0);
+  const strecke = kmEnd - offeneFahrt.kmStart;
+  const verbrauch = (strecke > 0 && gesamtLiter > 0)
+    ? ((gesamtLiter / strecke) * 100).toFixed(1) : null;
+
+  const bemEnd = (document.getElementById('m-bemerkung-end').value || '').trim();
+  const bemerkung = [offeneFahrt.bemerkung, bemEnd].filter(Boolean).join(' | ');
+
+  const fahrt = {
+    ...offeneFahrt,
+    kmEnd,
+    strecke,
+    timeEnd: document.getElementById('m-time-end').value,
+    bemerkung,
+    tankstopps,
+    gesamtLiter,
+    verbrauch
+  };
+
+  fahrten.unshift(fahrt);
+  save();
+  offeneFahrt = null;
+  saveOffen();
+
+  // Reset Ankunft-Felder
+  document.getElementById('m-km-end').value = '';
+  document.getElementById('m-bemerkung-end').value = '';
+
+  renderNeuPage(); // Sync Desktop
+  mRenderHome();
+  showToast('✦ Fahrt vollständig gespeichert!');
+}
+
+function mFahrtAbbrechen() {
+  if (!confirm('Laufende Fahrt wirklich abbrechen?')) return;
+  offeneFahrt = null;
+  saveOffen();
+  renderNeuPage();
+  mRenderHome();
+  showToast('Fahrt wurde abgebrochen.');
+}
+
+// ── FAHRTENBUCH ──
+function mRenderBuch() {
+  const years = getYears();
+  const tabsEl = document.getElementById('m-year-tabs');
+  const statsEl = document.getElementById('m-stats');
+  const entriesEl = document.getElementById('m-entries');
+
+  tabsEl.innerHTML = years.map(y =>
+    '<button class="m-ytab ' + (String(y) === String(selectedYear) ? 'active' : '') +
+    '" onclick="mSelectYear(' + y + ')">' + y + '</button>'
+  ).join('');
+
+  const jahresFahrten = getFahrtenForYear(String(selectedYear));
+  const totalKm = jahresFahrten.reduce((s,f) => s+(f.strecke||0), 0);
+  const totalL = jahresFahrten.reduce((s,f) => s+(f.gesamtLiter||0), 0);
+  const avgV = (totalKm>0&&totalL>0) ? ((totalL/totalKm)*100).toFixed(1) : '—';
+
+  statsEl.innerHTML =
+    '<div class="m-stat-box"><span class="m-stat-val">' + jahresFahrten.length + '</span><span class="m-stat-lbl">Fahrten</span></div>' +
+    '<div class="m-stat-box"><span class="m-stat-val">' + totalKm.toLocaleString('de-AT') + '</span><span class="m-stat-lbl">Kilometer</span></div>' +
+    '<div class="m-stat-box"><span class="m-stat-val">' + totalL.toFixed(1) + ' L</span><span class="m-stat-lbl">Kraftstoff</span></div>' +
+    '<div class="m-stat-box"><span class="m-stat-val">' + avgV + '</span><span class="m-stat-lbl">L/100km</span></div>';
+
+  if (jahresFahrten.length === 0) {
+    entriesEl.innerHTML = '<div style="text-align:center;color:rgba(200,151,58,0.3);font-style:italic;padding:40px 0;">Keine Fahrten für ' + selectedYear + '</div>';
+    return;
+  }
+
+  const total = jahresFahrten.length;
+  entriesEl.innerHTML = jahresFahrten.map((f, idx) => {
+    const nr = total - idx;
+    const tanks = f.tankstopps && f.tankstopps.length > 0
+      ? ' · ⛽ ' + f.gesamtLiter.toFixed(1) + ' L' : '';
+    return '<div class="m-entry">' +
+      '<div class="me-top">' +
+        '<div class="me-date">' + formatDate(f.datum) + ' · ' + f.zweck + '</div>' +
+        '<div class="me-nr">' + selectedYear + '-' + String(nr).padStart(2,'0') + '</div>' +
+      '</div>' +
+      '<div class="me-route">' + f.von + ' → ' + f.bis + '</div>' +
+      '<div class="me-stats">' +
+        '<span class="me-stat"><strong>' + f.strecke.toLocaleString('de-AT') + ' km</strong></span>' +
+        (f.timeStart ? '<span class="me-stat">' + f.timeStart + ' – ' + (f.timeEnd||'?') + ' Uhr</span>' : '') +
+        (tanks ? '<span class="me-stat">' + tanks + '</span>' : '') +
+      '</div>' +
+      '<div class="m-entry-actions">' +
+        '<button class="m-entry-btn edit" onclick="mOpenEdit(' + f.id + ')">✏ Bearbeiten</button>' +
+        '<button class="m-entry-btn del" onclick="mDeleteEntry(' + f.id + ')">✕ Löschen</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function mSelectYear(y) {
+  selectedYear = parseInt(y);
+  mRenderBuch();
+}
+
+// ══ MOBILE EDIT ══
+let mEditingId = null;
+let mEditTanks = [];
+
+function mOpenEdit(id) {
+  const f = fahrten.find(x => x.id === id);
+  if (!f) return;
+  mEditingId = id;
+  mEditTanks = JSON.parse(JSON.stringify(f.tankstopps || [])); // deep copy
+
+  document.getElementById('me-datum').value = f.datum || '';
+  document.getElementById('me-zweck').value = f.zweck || '';
+  document.getElementById('me-von').value = f.von || '';
+  document.getElementById('me-bis').value = f.bis || '';
+  document.getElementById('me-km-start').value = f.kmStart || '';
+  document.getElementById('me-km-end').value = f.kmEnd || '';
+  document.getElementById('me-time-start').value = f.timeStart || '';
+  document.getElementById('me-time-end').value = f.timeEnd || '';
+  document.getElementById('me-fahrer').value = f.fahrer || '';
+  document.getElementById('me-mitfahrer').value = f.mitfahrer || '';
+  document.getElementById('me-bemerkung').value = f.bemerkung || '';
+  document.getElementById('me-tank-add-form').style.display = 'none';
+
+  mRenderEditTanks();
+  document.getElementById('m-edit-modal').classList.add('open');
+}
+
+function mCloseEdit() {
+  document.getElementById('m-edit-modal').classList.remove('open');
+  mEditingId = null;
+}
+
+function mRenderEditTanks() {
+  const list = document.getElementById('me-tank-list');
+  if (mEditTanks.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:rgba(200,151,58,0.35);font-style:italic;margin-bottom:8px;">Keine Tankstopps.</div>';
+    return;
+  }
+  list.innerHTML = mEditTanks.map((t, i) =>
+    '<div class="m-edit-tank-item">' +
+      '<div class="eti-txt">' +
+        '<strong style="color:#c8973a">' + (t.time||'—') + ' Uhr</strong>' +
+        (t.ort ? ' · ' + t.ort : '') +
+        ' · ' + t.liter + ' L' +
+        (t.km ? ' · ' + t.km + ' km' : '') +
+        (t.bemerkung ? '<br><span style="font-style:italic;color:rgba(200,151,58,0.55)">' + t.bemerkung + '</span>' : '') +
+      '</div>' +
+      '<button class="m-edit-tank-del" onclick="mEditDelTank(' + i + ')">×</button>' +
+    '</div>'
+  ).join('');
+}
+
+function mEditDelTank(idx) {
+  mEditTanks.splice(idx, 1);
+  mRenderEditTanks();
+}
+
+function mEditShowTankAdd() {
+  const form = document.getElementById('me-tank-add-form');
+  form.style.display = 'block';
+  const now = new Date();
+  document.getElementById('me-ts-time').value =
+    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('me-ts-liter').value = '';
+  document.getElementById('me-ts-km').value = '';
+  document.getElementById('me-ts-ort').value = '';
+  document.getElementById('me-ts-bem').value = '';
+}
+
+function mEditSaveTank() {
+  const liter = parseFloat(document.getElementById('me-ts-liter').value);
+  if (!liter || liter <= 0) { showToast('⚠ Bitte Literzahl eingeben!'); return; }
+  mEditTanks.push({
+    time: document.getElementById('me-ts-time').value,
+    ort:  document.getElementById('me-ts-ort').value.trim(),
+    km:   parseFloat(document.getElementById('me-ts-km').value) || 0,
+    liter,
+    bemerkung: document.getElementById('me-ts-bem').value.trim()
+  });
+  document.getElementById('me-tank-add-form').style.display = 'none';
+  mRenderEditTanks();
+}
+
+function mSaveEdit() {
+  const idx = fahrten.findIndex(x => x.id === mEditingId);
+  if (idx === -1) return;
+
+  const kmStart = parseFloat(document.getElementById('me-km-start').value);
+  const kmEnd   = parseFloat(document.getElementById('me-km-end').value);
+  if (kmEnd < kmStart) { showToast('⚠ KM-Ende muss größer als KM-Beginn sein!'); return; }
+
+  const gesamtLiter = mEditTanks.reduce((s,t) => s+(t.liter||0), 0);
+  const strecke = kmEnd - kmStart;
+  const verbrauch = (strecke > 0 && gesamtLiter > 0)
+    ? ((gesamtLiter / strecke) * 100).toFixed(1) : null;
+
+  fahrten[idx] = {
+    ...fahrten[idx],
+    datum:     document.getElementById('me-datum').value,
+    zweck:     document.getElementById('me-zweck').value.trim(),
+    von:       document.getElementById('me-von').value.trim(),
+    bis:       document.getElementById('me-bis').value.trim(),
+    kmStart, kmEnd, strecke,
+    timeStart: document.getElementById('me-time-start').value,
+    timeEnd:   document.getElementById('me-time-end').value,
+    fahrer:    document.getElementById('me-fahrer').value.trim(),
+    mitfahrer: document.getElementById('me-mitfahrer').value.trim(),
+    bemerkung: document.getElementById('me-bemerkung').value.trim(),
+    tankstopps: mEditTanks,
+    gesamtLiter,
+    verbrauch
+  };
+
+  save();
+  mCloseEdit();
+  mRenderBuch();
+  showToast('✦ Fahrt aktualisiert!');
+}
+
+function mDeleteFromEdit() {
+  if (!confirm('Diese Fahrt wirklich löschen?')) return;
+  fahrten = fahrten.filter(f => f.id !== mEditingId);
+  save();
+  mCloseEdit();
+  mRenderBuch();
+  showToast('Fahrt gelöscht.');
+}
+
+function mDeleteEntry(id) {
+  if (!confirm('Fahrt wirklich löschen?')) return;
+  fahrten = fahrten.filter(f => f.id !== id);
+  save();
+  mRenderBuch();
+  showToast('Fahrt gelöscht.');
+}
+
+// ── SETTINGS (mobile) ──
+function mLoadSettings() {
+  document.getElementById('ms-title').value = settings.title || '';
+  document.getElementById('ms-kz').value = settings.kz || '';
+  document.getElementById('ms-vin').value = settings.vin || '';
+  document.getElementById('ms-motor').value = settings.motor || '';
+  document.getElementById('ms-sub').value = settings.sub || '';
+  loadGitHubSettings();
+}
+
+function mSaveSettings() {
+  settings = {
+    title: document.getElementById('ms-title').value.trim(),
+    kz: document.getElementById('ms-kz').value.trim(),
+    vin: document.getElementById('ms-vin').value.trim(),
+    motor: document.getElementById('ms-motor').value.trim(),
+    sub: document.getElementById('ms-sub').value.trim(),
+  };
+  localStorage.setItem('fahrtenbuch_settings', JSON.stringify(settings));
+  applySettings();
+  document.getElementById('m-header-title').textContent = settings.title || 'Fahrtenbuch';
+  document.getElementById('m-header-sub').textContent = settings.kz || 'Oldtimer';
+  showToast('✦ Einstellungen gespeichert!');
+}
+
+function mClearYear() {
+  if (!confirm('Alle Fahrten des Jahres ' + selectedYear + ' löschen?')) return;
+  fahrten = fahrten.filter(f => !f.datum || !f.datum.startsWith(String(selectedYear)));
+  save();
+  mRenderBuch();
+  showToast('Fahrten ' + selectedYear + ' gelöscht.');
+}
+
+// ── MOBILE INIT ──
+function mInit() {
+  // Header mit Fahrzeugname befüllen
+  if (settings.title) document.getElementById('m-header-title').textContent = settings.title;
+  if (settings.kz) document.getElementById('m-header-sub').textContent = settings.kz;
+  mRenderHome();
+}
+
+// Mobile init starten (nur wenn Mobile-UI sichtbar)
+if (window.innerWidth <= 767) {
+  mInit();
+}
+window.addEventListener('resize', () => {
+  if (window.innerWidth <= 767) mInit();
+});
+
+
+// ══════════════════════════════════════════════════════
+//  GITHUB SYNC
+// ══════════════════════════════════════════════════════
+
+let ghConfig = JSON.parse(localStorage.getItem('fahrtenbuch_github') || 'null');
+const GH_FILE = 'fahrtenbuch_data.json';
+
+// ── Helpers ──
+function ghHeaders() {
+  return {
+    'Authorization': 'token ' + ghConfig.token,
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json'
+  };
+}
+function ghApiUrl() {
+  return 'https://api.github.com/repos/' + ghConfig.user + '/' + ghConfig.repo + '/contents/' + GH_FILE;
+}
+function setSyncBadge(state, text) {
+  // desktop
+  const badge = document.getElementById('sync-badge');
+  const statusText = document.getElementById('sync-status-text');
+  // mobile
+  const mbadge = document.getElementById('m-sync-badge');
+  const mtext = document.getElementById('m-sync-text');
+
+  const map = {
+    ok:   { cls: 'ok',   label: '● Synchronisiert' },
+    err:  { cls: 'err',  label: '● Fehler' },
+    busy: { cls: 'busy', label: '↺ Sync…' },
+    off:  { cls: 'off',  label: '● Offline' }
+  };
+  const s = map[state] || map.off;
+
+  if (badge)      { badge.className = 'sync-badge ' + s.cls; badge.textContent = s.label; }
+  if (mbadge)     { mbadge.className = 'sync-badge ' + s.cls; mbadge.textContent = s.label; }
+  if (statusText) statusText.textContent = text || '';
+  if (mtext)      mtext.textContent = text || '';
+}
+
+// ── Load settings into form ──
+function loadGitHubSettings() {
+  if (!ghConfig) return;
+  ['s-gh-user','s-gh-repo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = ghConfig[id.replace('s-gh-','')] || '';
+  });
+  const tok = document.getElementById('s-gh-token');
+  if (tok) tok.value = ghConfig.token || '';
+  // mobile
+  ['ms-gh-user','ms-gh-repo','ms-gh-token'].forEach(id => {
+    const el = document.getElementById(id);
+    const key = id.replace('ms-gh-','');
+    if (el) el.value = ghConfig[key] || '';
+  });
+  if (ghConfig.user && ghConfig.repo) {
+    setSyncBadge('ok', ghConfig.user + '/' + ghConfig.repo + ' · ' + GH_FILE);
+  }
+}
+
+// ── Save & test connection ──
+async function saveGitHubSettings() {
+  const user  = (document.getElementById('s-gh-user')?.value  || '').trim();
+  const repo  = (document.getElementById('s-gh-repo')?.value  || '').trim();
+  const token = (document.getElementById('s-gh-token')?.value || '').trim();
+  if (!user || !repo || !token) { showToast('⚠ Bitte alle GitHub-Felder ausfüllen!'); return; }
+  ghConfig = { user, repo, token };
+  localStorage.setItem('fahrtenbuch_github', JSON.stringify(ghConfig));
+  showToast('↺ Verbindung wird getestet…');
+  setSyncBadge('busy', 'Verbindung wird getestet…');
+  const ok = await syncNow();
+  if (ok) showToast('✦ GitHub verbunden und Daten synchronisiert!');
+}
+
+async function mSaveGitHub() {
+  const user  = (document.getElementById('ms-gh-user')?.value  || '').trim();
+  const repo  = (document.getElementById('ms-gh-repo')?.value  || '').trim();
+  const token = (document.getElementById('ms-gh-token')?.value || '').trim();
+  if (!user || !repo || !token) { showToast('⚠ Bitte alle GitHub-Felder ausfüllen!'); return; }
+  // copy to desktop fields too
+  ghConfig = { user, repo, token };
+  localStorage.setItem('fahrtenbuch_github', JSON.stringify(ghConfig));
+  showToast('↺ Verbindung wird getestet…');
+  setSyncBadge('busy', 'Verbindung wird getestet…');
+  const ok = await syncNow();
+  if (ok) showToast('✦ GitHub verbunden!');
+}
+
+// ── Read from GitHub ──
+async function loadFromGitHub() {
+  if (!ghConfig) return false;
+  try {
+    setSyncBadge('busy', 'Lade Daten von GitHub…');
+    const res = await fetch(ghApiUrl(), { headers: ghHeaders() });
+    if (res.status === 404) {
+      // Datei existiert noch nicht — das ist OK beim ersten Mal
+      setSyncBadge('ok', ghConfig.user + '/' + ghConfig.repo + ' · Bereit (neue Datei)');
+      return true;
+    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const decoded = JSON.parse(atob(data.content.replace(/\n/g, '')));
+    // Merge: GitHub-Daten sind die Quelle der Wahrheit
+    fahrten = decoded.fahrten || [];
+    settings = decoded.settings || settings;
+    if (decoded.offeneFahrt) offeneFahrt = decoded.offeneFahrt;
+    save();
+    localStorage.setItem('fahrtenbuch_settings', JSON.stringify(settings));
+    applySettings();
+    setSyncBadge('ok', 'Geladen: ' + new Date().toLocaleTimeString('de-AT'));
+    return true;
+  } catch(e) {
+    setSyncBadge('err', 'Fehler: ' + e.message);
+    showToast('⚠ GitHub-Fehler: ' + e.message);
+    return false;
+  }
+}
+
+// ── Write to GitHub ──
+async function saveToGitHub() {
+  if (!ghConfig) return false;
+  try {
+    setSyncBadge('busy', 'Speichere auf GitHub…');
+    // Get current SHA (needed for update)
+    let sha = null;
+    const getRes = await fetch(ghApiUrl(), { headers: ghHeaders() });
+    if (getRes.ok) {
+      const existing = await getRes.json();
+      sha = existing.sha;
+    } else if (getRes.status !== 404) {
+      throw new Error('HTTP ' + getRes.status);
+    }
+
+    const payload = {
+      fahrten,
+      settings,
+      offeneFahrt,
+      lastSync: new Date().toISOString()
+    };
+    const body = {
+      message: 'Fahrtenbuch Update ' + new Date().toLocaleDateString('de-AT'),
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2)))),
+    };
+    if (sha) body.sha = sha;
+
+    const putRes = await fetch(ghApiUrl(), {
+      method: 'PUT',
+      headers: ghHeaders(),
+      body: JSON.stringify(body)
+    });
+    if (!putRes.ok) {
+      const err = await putRes.json();
+      throw new Error(err.message || 'HTTP ' + putRes.status);
+    }
+    setSyncBadge('ok', 'Gespeichert: ' + new Date().toLocaleTimeString('de-AT'));
+    return true;
+  } catch(e) {
+    setSyncBadge('err', 'Fehler: ' + e.message);
+    showToast('⚠ Sync-Fehler: ' + e.message);
+    return false;
+  }
+}
+
+// ── syncNow: load then save (full sync) ──
+async function syncNow() {
+  if (!ghConfig) { showToast('⚠ GitHub nicht konfiguriert!'); return false; }
+  const loaded = await loadFromGitHub();
+  if (!loaded) return false;
+  const saved = await saveToGitHub();
+  return saved;
+}
+
+// ── Auto-sync after every save ──
+const _origSave = save;
+function save() {
+  _origSave();
+  if (ghConfig) {
+    saveToGitHub(); // fire-and-forget
+  }
+}
+const _origSaveOffen = saveOffen;
+function saveOffen() {
+  _origSaveOffen();
+  if (ghConfig) {
+    saveToGitHub();
+  }
+}
+
+// ── GitHub Init: load on startup ──
+async function initGitHubSync() {
+  if (!ghConfig) {
+    setSyncBadge('off', 'Nicht konfiguriert — Daten werden lokal gespeichert.');
+    return;
+  }
+  loadGitHubSettings();
+  await loadFromGitHub();
+  // Re-render after loading
+  if (document.getElementById('entries-list')) renderBuch();
+  if (window.innerWidth <= 767) mRenderHome();
+}
+
+// Run on page load
+initGitHubSync();
+
+</script>
+
+<!-- ══════════════════════════════════════════════════════
+     MOBILE UI — iPhone optimiert
+══════════════════════════════════════════════════════ -->
+<div id="mobile-ui">
+
+  <!-- Header -->
+  <div class="m-header">
+    <div>
+      <div class="m-header-title" id="m-header-title">Fahrtenbuch</div>
+      <div class="m-header-sub" id="m-header-sub">Oldtimer</div>
+    </div>
+    <div class="m-status-dot idle" id="m-status-dot"></div>
+  </div>
+
+  <!-- ── SCREEN: HOME / ABFAHRT ── -->
+  <div class="m-screen active" id="m-screen-home">
+
+    <!-- Kein offener Trip: Abfahrt starten -->
+    <div id="m-no-trip">
+      <div class="m-home-status">
+        <div class="m-km-display" id="m-last-km">—</div>
+        <div class="m-km-label">Letzter KM-Stand</div>
+      </div>
+
+      <div class="m-divider"><span>① Abfahrt</span></div>
+
+      <div class="m-field">
+        <label>Datum</label>
+        <input type="date" id="m-datum">
+      </div>
+      <div class="m-field-row">
+        <div class="m-field">
+          <label>Abfahrt</label>
+          <input type="time" id="m-time-start">
+        </div>
+        <div class="m-field">
+          <label>KM-Stand</label>
+          <input type="number" id="m-km-start" placeholder="0">
+        </div>
+      </div>
+      <div class="m-field">
+        <label>Startort</label>
+        <input type="text" id="m-von" placeholder="Startort">
+      </div>
+      <div class="m-field">
+        <label>Zielort</label>
+        <input type="text" id="m-bis" placeholder="Zielort">
+      </div>
+      <div class="m-field">
+        <label>Zweck</label>
+        <input type="text" id="m-zweck" placeholder="z.B. Sonntagsausfahrt …">
+      </div>
+      <div class="m-field">
+        <label>Fahrer</label>
+        <input type="text" id="m-fahrer" placeholder="Name des Fahrers">
+      </div>
+      <div class="m-field">
+        <label>Mitfahrer</label>
+        <input type="text" id="m-mitfahrer" placeholder="Namen der Mitfahrer">
+      </div>
+      <div class="m-field">
+        <label>Bemerkung</label>
+        <textarea id="m-bemerkung" placeholder="Wetterbedingungen, Notizen …"></textarea>
+      </div>
+      <button class="m-big-btn" onclick="mAbfahrtStarten()">🚗 Abfahrt starten</button>
+    </div>
+
+    <!-- Offener Trip aktiv -->
+    <div id="m-open-trip" style="display:none">
+      <div class="m-trip-card">
+        <div class="tc-route" id="m-tc-route">— → —</div>
+        <div class="m-trip-grid">
+          <div class="tc-item">
+            <div class="tc-label">Abfahrt</div>
+            <div class="tc-value" id="m-tc-abfahrt">—</div>
+          </div>
+          <div class="tc-item">
+            <div class="tc-label">KM-Beginn</div>
+            <div class="tc-value" id="m-tc-km">—</div>
+          </div>
+          <div class="tc-item">
+            <div class="tc-label">Zweck</div>
+            <div class="tc-value" id="m-tc-zweck" style="font-size:14px">—</div>
+          </div>
+          <div class="tc-item">
+            <div class="tc-label">Fahrer</div>
+            <div class="tc-value" id="m-tc-fahrer" style="font-size:14px">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tankstopps Liste -->
+      <div class="m-divider"><span>⛽ Tankstopps unterwegs</span></div>
+      <div id="m-tank-list"></div>
+      <button class="m-big-btn secondary" onclick="mShowTankForm()">⛽ Tankstopp hinzufügen</button>
+
+      <!-- Tankstopp Schnell-Formular -->
+      <div id="m-tank-form" style="display:none;margin-top:16px;">
+        <div style="background:#1a1408;border:1.5px solid #c8973a;border-radius:14px;padding:20px;">
+          <div style="font-family:'Playfair Display',serif;color:#c8973a;font-size:16px;margin-bottom:16px;">⛽ Tankstopp erfassen</div>
+          <div class="m-field-row">
+            <div class="m-field">
+              <label>Uhrzeit</label>
+              <input type="time" id="m-ts-time">
+            </div>
+            <div class="m-field">
+              <label>KM-Stand</label>
+              <input type="number" id="m-ts-km" placeholder="km">
+            </div>
+          </div>
+          <div class="m-field">
+            <label>Ort / Tankstelle</label>
+            <input type="text" id="m-ts-ort" placeholder="z.B. OMV Gablitz">
+          </div>
+          <div class="m-field">
+            <label>Liter</label>
+            <input type="number" id="m-ts-liter" placeholder="0.0" step="0.01">
+          </div>
+          <div class="m-field">
+            <label>Bemerkung</label>
+            <input type="text" id="m-ts-bem" placeholder="z.B. Bleizusatzmittel 5ml">
+          </div>
+          <button class="m-big-btn green" onclick="mSaveTank()" style="margin-bottom:8px;">⛽ Speichern</button>
+          <button class="m-big-btn secondary" onclick="mHideTankForm()" style="font-size:13px;padding:12px;">Abbrechen</button>
+        </div>
+      </div>
+
+      <div class="m-divider"><span>② Ankunft</span></div>
+      <div class="m-field-row">
+        <div class="m-field">
+          <label>Ankunftszeit</label>
+          <input type="time" id="m-time-end">
+        </div>
+        <div class="m-field">
+          <label>KM-Stand Ende</label>
+          <input type="number" id="m-km-end" placeholder="0">
+        </div>
+      </div>
+      <div class="m-field">
+        <label>Bemerkung Ankunft</label>
+        <textarea id="m-bemerkung-end" placeholder="Zusätzliche Notizen …"></textarea>
+      </div>
+      <button class="m-big-btn green" onclick="mAnkunftSpeichern()">🏁 Ankunft speichern</button>
+      <button class="m-big-btn danger" onclick="mFahrtAbbrechen()">✕ Fahrt abbrechen</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN: FAHRTENBUCH ── -->
+  <div class="m-screen" id="m-screen-buch">
+    <div class="m-year-tabs" id="m-year-tabs"></div>
+    <div class="m-stats-row" id="m-stats"></div>
+    <div id="m-entries"></div>
+  </div>
+
+  <!-- ── SCREEN: EINSTELLUNGEN ── -->
+  <div class="m-screen" id="m-screen-settings">
+    <div class="m-settings-section">
+      <h3>🚗 Fahrzeug</h3>
+      <div class="m-field"><label>Bezeichnung</label><input type="text" id="ms-title" placeholder="z.B. Mercedes 280 SE · 1972"></div>
+      <div class="m-field"><label>Kennzeichen</label><input type="text" id="ms-kz" placeholder="z.B. W 12345"></div>
+      <div class="m-field"><label>Fahrgestellnummer</label><input type="text" id="ms-vin" placeholder="VIN / FIN"></div>
+      <div class="m-field"><label>Motor</label><input type="text" id="ms-motor" placeholder="z.B. 2.8L Reihensechszylinder"></div>
+      <div class="m-field"><label>Untertitel</label><input type="text" id="ms-sub" placeholder="z.B. Baujahr 1972 · British Racing Green"></div>
+      <button class="m-big-btn" onclick="mSaveSettings()" style="margin-top:8px;">✦ Speichern</button>
+    </div>
+    <div class="m-settings-section">
+      <h3>🔗 GitHub Sync</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <span style="font-size:12px;color:rgba(240,235,224,0.5);font-style:italic;" id="m-sync-text">Nicht konfiguriert</span>
+        <span class="sync-badge off" id="m-sync-badge">● Offline</span>
+      </div>
+      <div class="m-field"><label>GitHub Benutzername</label><input type="text" id="ms-gh-user" placeholder="z.B. chrisrapberger"></div>
+      <div class="m-field"><label>Repository Name</label><input type="text" id="ms-gh-repo" placeholder="z.B. fahrtenbuch"></div>
+      <div class="m-field"><label>Personal Access Token</label><input type="password" id="ms-gh-token" placeholder="ghp_xxxx…"></div>
+      <button class="m-big-btn" onclick="mSaveGitHub()" style="margin-bottom:8px;">🔗 Verbinden &amp; testen</button>
+      <button class="m-big-btn secondary" onclick="syncNow()" style="margin-bottom:0;font-size:14px;padding:14px;">↺ Jetzt synchronisieren</button>
+    </div>
+    <div class="m-settings-section">
+      <h3>📂 Daten</h3>
+      <button class="m-big-btn secondary" onclick="exportTXT()" style="margin-bottom:8px;">💾 Textdatei exportieren</button>
+      <button class="m-big-btn danger" onclick="mClearYear()" style="margin-bottom:8px;">⚠ Jahrgang löschen</button>
+      <button class="m-big-btn danger" onclick="clearAllYears()">⚠ Alle Daten löschen</button>
+    </div>
+    <div style="text-align:center;padding:20px 0;font-size:11px;color:rgba(200,151,58,0.3);letter-spacing:1px;">
+      OLDTIMER FAHRTENBUCH
+    </div>
+  </div>
+
+  <!-- ── MOBILE EDIT MODAL (Bottom Sheet) ── -->
+  <div class="m-modal-overlay" id="m-edit-modal">
+    <div class="m-modal-sheet">
+      <div class="m-modal-header">
+        <div class="m-modal-title">✏ Fahrt bearbeiten</div>
+        <button class="m-modal-close" onclick="mCloseEdit()">✕</button>
+      </div>
+
+      <div class="m-field-row">
+        <div class="m-field"><label>Datum</label><input type="date" id="me-datum"></div>
+        <div class="m-field"><label>Zweck</label><input type="text" id="me-zweck" placeholder="Zweck"></div>
+      </div>
+      <div class="m-field-row">
+        <div class="m-field"><label>Startort</label><input type="text" id="me-von"></div>
+        <div class="m-field"><label>Zielort</label><input type="text" id="me-bis"></div>
+      </div>
+      <div class="m-field-row">
+        <div class="m-field"><label>KM-Beginn</label><input type="number" id="me-km-start"></div>
+        <div class="m-field"><label>KM-Ende</label><input type="number" id="me-km-end"></div>
+      </div>
+      <div class="m-field-row">
+        <div class="m-field"><label>Abfahrt</label><input type="time" id="me-time-start"></div>
+        <div class="m-field"><label>Ankunft</label><input type="time" id="me-time-end"></div>
+      </div>
+      <div class="m-field-row">
+        <div class="m-field"><label>Fahrer</label><input type="text" id="me-fahrer"></div>
+        <div class="m-field"><label>Mitfahrer</label><input type="text" id="me-mitfahrer"></div>
+      </div>
+      <div class="m-field">
+        <label>Bemerkungen</label>
+        <textarea id="me-bemerkung" style="min-height:70px;resize:none;"></textarea>
+      </div>
+
+      <!-- Tankstopps im Edit -->
+      <div class="m-divider"><span>⛽ Tankstopps</span></div>
+      <div id="me-tank-list"></div>
+      <button class="m-big-btn secondary" onclick="mEditShowTankAdd()" style="font-size:13px;padding:12px;margin-bottom:16px;">+ Tankstopp hinzufügen</button>
+      <div id="me-tank-add-form" style="display:none;background:#1a1408;border:1px solid rgba(200,151,58,0.3);border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div class="m-field-row">
+          <div class="m-field"><label>Uhrzeit</label><input type="time" id="me-ts-time"></div>
+          <div class="m-field"><label>KM-Stand</label><input type="number" id="me-ts-km" placeholder="km"></div>
+        </div>
+        <div class="m-field-row">
+          <div class="m-field"><label>Ort</label><input type="text" id="me-ts-ort" placeholder="Tankstelle"></div>
+          <div class="m-field"><label>Liter</label><input type="number" id="me-ts-liter" placeholder="L" step="0.01"></div>
+        </div>
+        <div class="m-field"><label>Bemerkung</label><input type="text" id="me-ts-bem" placeholder="z.B. Bleizusatzmittel 5ml"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="m-big-btn green" onclick="mEditSaveTank()" style="font-size:13px;padding:12px;">⛽ Hinzufügen</button>
+          <button class="m-big-btn secondary" onclick="document.getElementById('me-tank-add-form').style.display='none'" style="font-size:12px;padding:12px;">✕</button>
+        </div>
+      </div>
+
+      <button class="m-big-btn" onclick="mSaveEdit()" style="margin-top:8px;">✦ Änderungen speichern</button>
+      <button class="m-big-btn danger" onclick="mDeleteFromEdit()" style="margin-top:8px;">✕ Fahrt löschen</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="m-bottom-nav">
+    <button class="m-nav-btn active" id="m-nav-home" onclick="mNav('home')">
+      <span class="m-nav-icon">🚗</span>Fahrt
+    </button>
+    <button class="m-nav-btn" id="m-nav-buch" onclick="mNav('buch')">
+      <span class="m-nav-icon">📖</span>Buch
+    </button>
+    <button class="m-nav-btn" id="m-nav-settings" onclick="mNav('settings')">
+      <span class="m-nav-icon">⚙️</span>Einst.
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
