@@ -44,6 +44,17 @@
     "motor": "",
     "sub": "Rot"
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-02-25T22:16:50.994Z"
+  "offeneFahrt": {
+    "id": 1772057848111,
+    "datum": "2026-02-25",
+    "zweck": "test11fefge",
+    "von": "Gablitz",
+    "bis": "Purkersdorf",
+    "kmStart": 3,
+    "timeStart": "23:16",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "",
+    "bemerkung": ""
+  },
+  "lastSync": "2026-02-25T22:17:28.371Z"
 }
