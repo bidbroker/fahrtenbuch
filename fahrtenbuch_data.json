@@ -1,17 +1,25 @@
 {
-  "fahrten": [],
+  "fahrten": [
+    {
+      "id": 1772056769063,
+      "datum": "2026-02-25",
+      "zweck": "test11",
+      "von": "Gablitz",
+      "bis": "Purkersdorf",
+      "kmStart": 1,
+      "timeStart": "22:57",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "",
+      "kmEnd": 2,
+      "strecke": 1,
+      "timeEnd": "22:59",
+      "tankstopps": [],
+      "gesamtLiter": 0,
+      "verbrauch": null
+    }
+  ],
   "settings": {},
-  "offeneFahrt": {
-    "id": 1772056769063,
-    "datum": "2026-02-25",
-    "zweck": "test11",
-    "von": "Gablitz",
-    "bis": "Purkersdorf",
-    "kmStart": 1,
-    "timeStart": "22:57",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
-    "bemerkung": ""
-  },
-  "lastSync": "2026-02-25T21:59:29.244Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-02-25T21:59:38.805Z"
 }
