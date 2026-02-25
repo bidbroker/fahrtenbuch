@@ -80,6 +80,18 @@
     "motor": "",
     "sub": "Rot"
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-02-25T22:18:53.530Z"
+  "offeneFahrt": {
+    "id": 1772057964189,
+    "datum": "2026-02-25",
+    "zweck": "t1",
+    "von": "Gablitz",
+    "bis": "Purkersdorf",
+    "kmStart": 4,
+    "timeStart": "23:18",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "",
+    "bemerkung": "schnee",
+    "tankstopps": []
+  },
+  "lastSync": "2026-02-25T22:19:24.191Z"
 }
