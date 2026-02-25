@@ -1366,11 +1366,11 @@ let tankCounter = 0;
 let editTankCounter = 0;
 let selectedYear = new Date().getFullYear();
 
-function save() {
+function saveFahrtenLocal() {
   localStorage.setItem('fahrtenbuch_fahrten', JSON.stringify(fahrten));
 }
 
-function saveOffen() {
+function saveOffenLocal() {
   if (offeneFahrt)
     localStorage.setItem('fahrtenbuch_offen', JSON.stringify(offeneFahrt));
   else
@@ -2699,20 +2699,14 @@ async function syncNow() {
   return saved;
 }
 
-// ── Auto-sync after every save ──
-const _origSave = save;
+// ── save() & saveOffen() — lokal + GitHub ──
 function save() {
-  _origSave();
-  if (ghConfig) {
-    saveToGitHub(); // fire-and-forget
-  }
+  saveFahrtenLocal();
+  if (ghConfig) saveToGitHub();
 }
-const _origSaveOffen = saveOffen;
 function saveOffen() {
-  _origSaveOffen();
-  if (ghConfig) {
-    saveToGitHub();
-  }
+  saveOffenLocal();
+  if (ghConfig) saveToGitHub();
 }
 
 // ── GitHub Init: load on startup ──
