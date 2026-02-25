@@ -117,7 +117,15 @@
     "fahrer": "Christian Rapberger",
     "mitfahrer": "Andrea",
     "bemerkung": "wird ein langer weg",
-    "tankstopps": []
+    "tankstopps": [
+      {
+        "time": "23:23",
+        "ort": "OMV",
+        "km": 5,
+        "liter": 1,
+        "bemerkung": "50 ml Bleizusatz"
+      }
+    ]
   },
-  "lastSync": "2026-02-25T22:22:25.368Z"
+  "lastSync": "2026-02-25T22:22:54.486Z"
 }
