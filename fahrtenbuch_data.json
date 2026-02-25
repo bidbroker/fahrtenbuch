@@ -1,6 +1,17 @@
 {
   "fahrten": [],
   "settings": {},
-  "offeneFahrt": null,
-  "lastSync": "2026-02-25T21:59:16.204Z"
+  "offeneFahrt": {
+    "id": 1772056769063,
+    "datum": "2026-02-25",
+    "zweck": "test11",
+    "von": "Gablitz",
+    "bis": "Purkersdorf",
+    "kmStart": 1,
+    "timeStart": "22:57",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "",
+    "bemerkung": ""
+  },
+  "lastSync": "2026-02-25T21:59:29.244Z"
 }
