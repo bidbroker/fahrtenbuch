@@ -1095,7 +1095,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v25 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v27 · 2026</p>
   </div>
 </header>
 
@@ -1232,7 +1232,6 @@
 
   <div class="btn-group no-print" style="margin-bottom:24px;">
     <button class="btn btn-primary" onclick="printFahrtenbuch()">🖨 Drucken</button>
-    <button class="btn btn-secondary" onclick="exportTXT()">💾 Als Textdatei exportieren</button>
   </div>
 
   <div id="entries-list"></div>
@@ -1972,71 +1971,67 @@ function deleteFahrt(id) {
 
 // ═══════════════════════════════ EXPORT TXT ═══════════════════════════════
 function exportTXT() {
-  const jahresFahrten = getFahrtenForYear(String(selectedYear));
-  if (jahresFahrten.length === 0) { showToast(`Keine Fahrten für ${selectedYear} vorhanden.`); return; }
-
+  if (fahrten.length === 0) { showToast('Keine Fahrten vorhanden.'); return; }
   const s = settings;
-  const total = jahresFahrten.length;
+  const years = getYears();
   let txt = '';
+
   txt += '═'.repeat(60) + '\n';
-  txt += `  FAHRTENBUCH ${selectedYear}${s.title ? ' – ' + s.title.toUpperCase() : ''}\n`;
-  if (s.kz) txt += `  Kennzeichen: ${s.kz}\n`;
-  if (s.vin) txt += `  FIN/VIN: ${s.vin}\n`;
-  if (s.motor) txt += `  Motor: ${s.motor}\n`;
-  txt += `  Erstellt am: ${new Date().toLocaleDateString('de-AT')}\n`;
-  txt += '═'.repeat(60) + '\n\n';
+  txt += '  ' + (s.title ? s.title.toUpperCase() : 'FAHRTENBUCH') + '\n';
+  txt += '═'.repeat(60) + '\n';
+  if (s.kz)    txt += '  Kennzeichen : ' + s.kz + '\n';
+  if (s.vin)   txt += '  FIN/VIN     : ' + s.vin + '\n';
+  if (s.motor) txt += '  Motor       : ' + s.motor + '\n';
+  txt += '  Erstellt am : ' + new Date().toLocaleDateString('de-AT') + '\n';
+  txt += '═'.repeat(60) + '\n';
 
-  const totalKm = jahresFahrten.reduce((s, f) => s + (f.strecke || 0), 0);
-  const totalLiter = jahresFahrten.reduce((s, f) => s + (f.gesamtLiter || 0), 0);
-  txt += `JAHRESÜBERSICHT ${selectedYear}\n`;
-  txt += '─'.repeat(40) + '\n';
-  txt += `Fahrten gesamt:     ${total}\n`;
-  txt += `Kilometer gesamt:   ${totalKm.toLocaleString('de-AT')} km\n`;
-  txt += `Kraftstoff gesamt:  ${totalLiter.toFixed(1)} L\n`;
-  if (totalKm > 0 && totalLiter > 0)
-    txt += `Ø Verbrauch:        ${((totalLiter / totalKm) * 100).toFixed(1)} L/100km\n`;
-  txt += '\n\n';
+  years.forEach(year => {
+    const jf = getFahrtenForYear(String(year));
+    if (jf.length === 0) return;
+    const totalKm = jf.reduce((s,f) => s+(f.strecke||0), 0);
+    const totalL  = jf.reduce((s,f) => s+(f.gesamtLiter||0), 0);
+    const avgV    = (totalKm>0&&totalL>0) ? ((totalL/totalKm)*100).toFixed(1) : '—';
 
-  [...jahresFahrten].reverse().forEach((f, i) => {
-    const nr = i + 1;
-    txt += '─'.repeat(60) + '\n';
-    txt += `FAHRT ${selectedYear}-${String(nr).padStart(2,'0')}: ${formatDate(f.datum)} – ${f.zweck.toUpperCase()}\n`;
-    txt += '─'.repeat(60) + '\n';
-    txt += `Route:         ${f.von} → ${f.bis}\n`;
-    txt += `KM-Beginn:     ${f.kmStart.toLocaleString('de-AT')} km\n`;
-    txt += `KM-Ende:       ${f.kmEnd.toLocaleString('de-AT')} km\n`;
-    txt += `Strecke:       ${f.strecke.toLocaleString('de-AT')} km\n`;
-    if (f.timeStart) txt += `Abfahrt:       ${f.timeStart} Uhr\n`;
-    if (f.timeEnd)   txt += `Ankunft:       ${f.timeEnd} Uhr\n`;
-    if (f.fahrer)    txt += `Fahrer:        ${f.fahrer}\n`;
-    if (f.mitfahrer) txt += `Mitfahrer:     ${f.mitfahrer}\n`;
-    if (f.bemerkung) txt += `Bemerkungen:   ${f.bemerkung}\n`;
-    if (f.tankstopps && f.tankstopps.length > 0) {
-      txt += `\nTankstopps:\n`;
-      f.tankstopps.forEach(t => {
-        txt += `  • `;
-        if (t.ort) txt += `${t.ort}  `;
-        if (t.km)  txt += `KM-Stand: ${t.km} km  `;
-        if (t.liter) txt += `Getankt: ${t.liter} L`;
-        txt += '\n';
-      });
-      txt += `  Gesamt getankt: ${f.gesamtLiter.toFixed(1)} L\n`;
-      if (f.verbrauch) txt += `  Ø Verbrauch:   ${f.verbrauch} L/100km\n`;
-    }
-    txt += '\n';
+    txt += '\n' + '█'.repeat(60) + '\n';
+    txt += '  FAHRTENBUCH ' + year + '\n';
+    txt += '█'.repeat(60) + '\n';
+    txt += 'Fahrten: ' + jf.length + '  |  Kilometer: ' + totalKm.toLocaleString('de-AT') + ' km  |  Kraftstoff: ' + totalL.toFixed(1) + ' L  |  Ø: ' + avgV + ' L/100km\n\n';
+
+    [...jf].reverse().forEach((f, idx) => {
+      const nr = String(idx+1).padStart(2,'0');
+      txt += '─'.repeat(60) + '\n';
+      txt += 'FAHRT ' + year + '-' + nr + ': ' + formatDate(f.datum) + ' – ' + (f.zweck||'').toUpperCase() + '\n';
+      txt += 'Route:       ' + (f.von||'') + ' → ' + (f.bis||'') + '\n';
+      txt += 'KM Beginn:   ' + (f.kmStart||0).toLocaleString('de-AT') + ' km\n';
+      txt += 'KM Ende:     ' + (f.kmEnd||0).toLocaleString('de-AT') + ' km\n';
+      txt += 'Strecke:     ' + (f.strecke||0).toLocaleString('de-AT') + ' km\n';
+      if (f.timeStart) txt += 'Abfahrt:     ' + f.timeStart + ' Uhr\n';
+      if (f.timeEnd)   txt += 'Ankunft:     ' + f.timeEnd   + ' Uhr\n';
+      if (f.fahrer)    txt += 'Fahrer:      ' + f.fahrer + '\n';
+      if (f.mitfahrer) txt += 'Mitfahrer:   ' + f.mitfahrer + '\n';
+      if (f.bemerkung) txt += 'Bemerkung:   ' + f.bemerkung + '\n';
+      if (f.tankstopps && f.tankstopps.length > 0) {
+        f.tankstopps.forEach(t => {
+          txt += '  ⛽ ' + (t.time||'') + (t.ort?' '+t.ort:'') + ' · ' + t.liter + ' L' + (t.bemerkung?' ('+t.bemerkung+')':'') + '\n';
+        });
+        txt += '  Gesamt: ' + f.gesamtLiter.toFixed(1) + ' L' + (f.verbrauch?' · Ø '+f.verbrauch+' L/100km':'') + '\n';
+      }
+      txt += '\n';
+    });
   });
 
   txt += '═'.repeat(60) + '\n';
-  txt += `  Ende des Fahrtenbuchs ${selectedYear}\n`;
+  txt += '  Ende des Fahrtenbuchs\n';
   txt += '═'.repeat(60) + '\n';
 
   const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `fahrtenbuch_${selectedYear}.txt`;
+  a.download = 'fahrtenbuch_komplett.txt';
   a.click();
-  showToast(`✦ Fahrtenbuch ${selectedYear} exportiert!`);
+  showToast('✦ Gesamtes Fahrtenbuch exportiert!');
 }
+
 
 // ═══════════════════════════════ SETTINGS ═══════════════════════════════
 function loadSettings() {
