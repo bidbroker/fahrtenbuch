@@ -1094,7 +1094,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v8 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v9 · 2026</p>
   </div>
 </header>
 
@@ -2688,25 +2688,37 @@ async function saveGitHubSettings() {
   if (ok) showToast('✦ GitHub verbunden und Daten synchronisiert!');
 }
 
+function mShowDiag(msg, color) {
+  const box = document.getElementById('m-diag-box');
+  if (!box) return;
+  box.style.display = 'block';
+  box.style.borderColor = color || '#c8973a';
+  const time = new Date().toLocaleTimeString('de-AT');
+  box.innerHTML += '<div style="margin-bottom:4px"><span style="color:rgba(200,151,58,0.5)">' + time + '</span> ' + msg + '</div>';
+  box.scrollTop = box.scrollHeight;
+}
+
 async function mSaveGitHub() {
-  // Trim + strip invisible chars iOS might add
+  const box = document.getElementById('m-diag-box');
+  if (box) box.innerHTML = '';
+
   const user  = (document.getElementById('ms-gh-user')?.value  || '').replace(/\s/g,'');
   const repo  = (document.getElementById('ms-gh-repo')?.value  || '').replace(/\s/g,'');
   const token = (document.getElementById('ms-gh-token')?.value || '').replace(/\s/g,'');
 
-  if (!user)  { alert('Benutzername fehlt!');  return; }
-  if (!repo)  { alert('Repository fehlt!');    return; }
-  if (!token) { alert('Token fehlt!');         return; }
+  mShowDiag('Felder gelesen: user=' + (user||'LEER') + ' repo=' + (repo||'LEER') + ' token=' + (token ? token.substring(0,8)+'…' : 'LEER'));
 
-  // Step 1: Config speichern
+  if (!user)  { mShowDiag('⚠ Benutzername fehlt!', '#e74c3c'); return; }
+  if (!repo)  { mShowDiag('⚠ Repository fehlt!',   '#e74c3c'); return; }
+  if (!token) { mShowDiag('⚠ Token fehlt!',        '#e74c3c'); return; }
+
   ghConfig = { user, repo, token };
   localStorage.setItem('fahrtenbuch_github', JSON.stringify(ghConfig));
-  alert('Schritt 1 ✓\nVerbinde mit:\n' + user + '/' + repo + '\n\nToken: ' + token.substring(0,8) + '…');
-
+  mShowDiag('✓ Config gespeichert');
   setSyncBadge('busy', 'Verbinde…');
 
-  // Step 2: GitHub API testen
   try {
+    mShowDiag('Teste Verbindung zu github.com…');
     const testUrl = 'https://api.github.com/repos/' + user + '/' + repo;
     const testRes = await fetch(testUrl, {
       headers: {
@@ -2715,38 +2727,37 @@ async function mSaveGitHub() {
       }
     });
 
+    mShowDiag('GitHub Antwort: HTTP ' + testRes.status);
+
     if (testRes.status === 401) {
-      alert('Fehler: Token ungültig oder abgelaufen (401)\n\nBitte neues Token erstellen.');
-      setSyncBadge('err', 'Token ungültig');
-      return;
+      mShowDiag('⚠ Token ungültig oder abgelaufen (401) — bitte neues Token erstellen.', '#e74c3c');
+      setSyncBadge('err', 'Token ungültig'); return;
     }
     if (testRes.status === 404) {
-      alert('Fehler: Repository nicht gefunden (404)\n\nBitte Benutzername und Repository prüfen:\n' + user + '/' + repo);
-      setSyncBadge('err', 'Repository nicht gefunden');
-      return;
+      mShowDiag('⚠ Repository nicht gefunden (404) — ' + user + '/' + repo, '#e74c3c');
+      setSyncBadge('err', 'Repo nicht gefunden'); return;
+    }
+    if (testRes.status === 403) {
+      mShowDiag('⚠ Zugriff verweigert (403) — Token hat keine Berechtigung für dieses Repository.', '#e74c3c');
+      setSyncBadge('err', 'Zugriff verweigert'); return;
     }
     if (!testRes.ok) {
-      alert('Fehler HTTP ' + testRes.status + '\n\nBitte versuchen Sie es später erneut.');
-      setSyncBadge('err', 'HTTP ' + testRes.status);
-      return;
+      mShowDiag('⚠ HTTP Fehler ' + testRes.status, '#e74c3c');
+      setSyncBadge('err', 'HTTP ' + testRes.status); return;
     }
 
-    alert('Schritt 2 ✓\nVerbindung erfolgreich!\n\nLade jetzt Fahrtdaten…');
-
-    // Step 3: Daten laden
+    mShowDiag('✓ Verbindung OK — lade Fahrtdaten…');
     const loaded = await loadFromGitHub();
-    if (!loaded) {
-      alert('Daten konnten nicht geladen werden.\nDie Verbindung funktioniert aber — beim nächsten Sync wird alles übertragen.');
-    }
+    mShowDiag(loaded ? '✓ Daten geladen!' : '⚠ Laden fehlgeschlagen (aber Verbindung OK)');
 
     renderBuch();
     mRenderHome();
     mRenderBuch();
     setSyncBadge('ok', user + '/' + repo);
-    alert('✓ Fertig!\n\nGitHub ist verbunden.\nAb jetzt werden alle Fahrten automatisch synchronisiert.');
+    mShowDiag('✓ Fertig — GitHub verbunden!', '#4caf50');
 
   } catch(e) {
-    alert('Netzwerkfehler: ' + e.message + '\n\nBitte Internetverbindung prüfen.');
+    mShowDiag('⚠ Netzwerkfehler: ' + e.message, '#e74c3c');
     setSyncBadge('err', e.message);
   }
 }
@@ -3195,7 +3206,8 @@ function esc(str) {
       <div class="m-field"><label>Repository Name</label><input type="text" id="ms-gh-repo" placeholder="z.B. fahrtenbuch"></div>
       <div class="m-field"><label>Personal Access Token</label><input type="password" id="ms-gh-token" placeholder="ghp_xxxx…"></div>
       <button class="m-big-btn" onclick="mSaveGitHub()" style="margin-bottom:8px;">🔗 Verbinden &amp; testen</button>
-      <button class="m-big-btn secondary" onclick="syncNow()" style="margin-bottom:0;font-size:14px;padding:14px;">↺ Jetzt synchronisieren</button>
+      <button class="m-big-btn secondary" onclick="syncNow().then(()=>mShowDiag('Sync abgeschlossen')).catch(e=>mShowDiag('Fehler: '+e.message))" style="margin-bottom:8px;font-size:14px;padding:14px;">↺ Jetzt synchronisieren</button>
+      <div id="m-diag-box" style="display:none;background:#0d0d0f;border:2px solid #c8973a;border-radius:10px;padding:14px;margin-top:12px;font-size:12px;color:#f0ebe0;line-height:1.6;word-break:break-all;"></div>
     </div>
     <div class="m-settings-section">
       <h3>📂 Daten</h3>
