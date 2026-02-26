@@ -1081,7 +1081,7 @@
   .sync-status-bar .ss-info { font-size: 13px; color: var(--brown); font-style: italic; }
 
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
 </head>
 <body>
 
@@ -1095,7 +1095,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v18 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v22 · 2026</p>
   </div>
 </header>
 
@@ -3046,6 +3046,10 @@ function esc(str) {
 //  EXCEL / CSV EXPORT
 // ══════════════════════════════════════════════════════
 function exportXLS() {
+  if (typeof XLSX === 'undefined') {
+    showToast('⚠ Excel-Export wird geladen, bitte kurz warten und nochmals tippen.');
+    return;
+  }
   const years = getYears();
   const wb = XLSX.utils.book_new();
 
@@ -3133,8 +3137,7 @@ function exportCSV() {
     });
   });
 
-  const blob = new Blob(['﻿'+rows.join('
-')], {type:'text/csv;charset=utf-8'});
+  const blob = new Blob([String.fromCharCode(0xFEFF)+rows.join(String.fromCharCode(10))], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'Fahrtenbuch_' + (settings.kz||'export') + '.csv';
