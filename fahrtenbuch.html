@@ -1094,7 +1094,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v12 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v13 · 2026</p>
   </div>
 </header>
 
@@ -1391,23 +1391,40 @@
 
 <script>
 // ═══════════════════════════════ DATA ═══════════════════════════════
-let fahrten = JSON.parse(localStorage.getItem('fahrtenbuch_fahrten') || '[]');
-let settings = JSON.parse(localStorage.getItem('fahrtenbuch_settings') || '{}');
-let offeneFahrt = JSON.parse(localStorage.getItem('fahrtenbuch_offen') || 'null');
+// ── Safe localStorage wrapper (iOS private mode fix) ──
+const ls = {
+  _store: {},
+  get(key) {
+    try { return localStorage.getItem(key); }
+    catch(e) { return this._store[key] || null; }
+  },
+  set(key, val) {
+    try { localStorage.setItem(key, val); }
+    catch(e) { this._store[key] = val; }
+  },
+  remove(key) {
+    try { localStorage.removeItem(key); }
+    catch(e) { delete this._store[key]; }
+  }
+};
+
+let fahrten = JSON.parse(ls.get('fahrtenbuch_fahrten') || '[]');
+let settings = JSON.parse(ls.get('fahrtenbuch_settings') || '{}');
+let offeneFahrt = JSON.parse(ls.get('fahrtenbuch_offen') || 'null');
 let editingId = null;
 let tankCounter = 0;
 let editTankCounter = 0;
 let selectedYear = new Date().getFullYear();
 
 function saveFahrtenLocal() {
-  localStorage.setItem('fahrtenbuch_fahrten', JSON.stringify(fahrten));
+  ls.set('fahrtenbuch_fahrten', JSON.stringify(fahrten));
 }
 
 function saveOffenLocal() {
   if (offeneFahrt)
-    localStorage.setItem('fahrtenbuch_offen', JSON.stringify(offeneFahrt));
+    ls.set('fahrtenbuch_offen', JSON.stringify(offeneFahrt));
   else
-    localStorage.removeItem('fahrtenbuch_offen');
+    ls.remove('fahrtenbuch_offen');
 }
 
 // ═══════════════════════════════ YEAR HELPERS ═══════════════════════════════
@@ -2034,7 +2051,7 @@ function saveSettings() {
     motor: document.getElementById('s-motor').value.trim(),
     sub: document.getElementById('s-sub').value.trim(),
   };
-  localStorage.setItem('fahrtenbuch_settings', JSON.stringify(settings));
+  ls.set('fahrtenbuch_settings', JSON.stringify(settings));
   applySettings();
   showToast('✦ Einstellungen gespeichert!');
 }
@@ -2582,7 +2599,7 @@ function mSaveSettings() {
     motor: document.getElementById('ms-motor').value.trim(),
     sub: document.getElementById('ms-sub').value.trim(),
   };
-  localStorage.setItem('fahrtenbuch_settings', JSON.stringify(settings));
+  ls.set('fahrtenbuch_settings', JSON.stringify(settings));
   applySettings();
   document.getElementById('m-header-title').textContent = settings.title || 'Fahrtenbuch';
   document.getElementById('m-header-sub').textContent = settings.kz || 'Oldtimer';
@@ -2618,7 +2635,7 @@ window.addEventListener('resize', () => {
 //  GITHUB SYNC
 // ══════════════════════════════════════════════════════
 
-let ghConfig = JSON.parse(localStorage.getItem('fahrtenbuch_github') || 'null');
+let ghConfig = JSON.parse(ls.get('fahrtenbuch_github') || 'null');
 const GH_FILE = 'fahrtenbuch_data.json';
 
 // ── Helpers ──
@@ -2681,7 +2698,7 @@ async function saveGitHubSettings() {
   const token = (document.getElementById('s-gh-token')?.value || '').trim();
   if (!user || !repo || !token) { showToast('⚠ Bitte alle GitHub-Felder ausfüllen!'); return; }
   ghConfig = { user, repo, token };
-  localStorage.setItem('fahrtenbuch_github', JSON.stringify(ghConfig));
+  ls.set('fahrtenbuch_github', JSON.stringify(ghConfig));
   showToast('↺ Verbindung wird getestet…');
   setSyncBadge('busy', 'Verbindung wird getestet…');
   const ok = await syncNow();
@@ -2711,13 +2728,8 @@ async function mSaveGitHub() {
   if (!token) { mShowDiag('⚠ Token fehlt!',        '#e74c3c'); return; }
 
   ghConfig = { user, repo, token };
-  try {
-    localStorage.setItem('fahrtenbuch_github', JSON.stringify(ghConfig));
-    mShowDiag('✓ Config gespeichert (localStorage OK)');
-  } catch(lsErr) {
-    mShowDiag('⚠ localStorage Fehler: ' + lsErr.message + ' — iOS Privater Modus?', '#e74c3c');
-    mShowDiag('Versuche trotzdem Verbindung…');
-  }
+  ls.set('fahrtenbuch_github', JSON.stringify(ghConfig));
+  mShowDiag('✓ Config gespeichert');
   setSyncBadge('busy', 'Verbinde…');
 
   try {
@@ -2784,7 +2796,7 @@ async function loadFromGitHub() {
     settings = decoded.settings || settings;
     if (decoded.offeneFahrt) offeneFahrt = decoded.offeneFahrt;
     save();
-    localStorage.setItem('fahrtenbuch_settings', JSON.stringify(settings));
+    ls.set('fahrtenbuch_settings', JSON.stringify(settings));
     applySettings();
     setSyncBadge('ok', 'Geladen: ' + new Date().toLocaleTimeString('de-AT'));
     return true;
