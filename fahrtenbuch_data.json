@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1772116457694,
+      "datum": "2026-02-26",
+      "zweck": "probieren2222",
+      "von": "Gablitz",
+      "bis": "Testort22",
+      "kmStart": 26442,
+      "kmEnd": 26450,
+      "strecke": 8,
+      "timeStart": "15:29",
+      "timeEnd": "15:34",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "regenc & schnee | alles gut",
+      "tankstopps": [],
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1772116319983,
       "datum": "2026-02-26",
       "zweck": "probieren",
@@ -1092,18 +1110,6 @@
     "motor": "",
     "sub": ""
   },
-  "offeneFahrt": {
-    "id": 1772116457694,
-    "datum": "2026-02-26",
-    "zweck": "probieren2222",
-    "von": "Gablitz",
-    "bis": "Testort22",
-    "kmStart": 26442,
-    "timeStart": "15:29",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
-    "bemerkung": "regenc & schnee",
-    "tankstopps": []
-  },
-  "lastSync": "2026-02-26T14:34:17.695Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-02-26T14:34:43.525Z"
 }
