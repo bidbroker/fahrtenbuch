@@ -793,11 +793,11 @@
           "time": "",
           "ort": "",
           "km": 24932,
-          "liter": 15.0,
+          "liter": 15,
           "bemerkung": ""
         }
       ],
-      "gesamtLiter": 15.0,
+      "gesamtLiter": 15,
       "verbrauch": "65.2"
     },
     {
@@ -1053,11 +1053,11 @@
           "time": "",
           "ort": "",
           "km": 24328,
-          "liter": 17.0,
+          "liter": 17,
           "bemerkung": ""
         }
       ],
-      "gesamtLiter": 17.0,
+      "gesamtLiter": 17,
       "verbrauch": "130.8"
     }
   ],
@@ -1068,6 +1068,18 @@
     "motor": "",
     "sub": ""
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-02-26T13:58:30.702557"
+  "offeneFahrt": {
+    "id": 1772116319983,
+    "datum": "2026-02-26",
+    "zweck": "probieren",
+    "von": "Gablitz",
+    "bis": "Testort",
+    "kmStart": 26442,
+    "timeStart": "15:29",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "",
+    "bemerkung": "regen",
+    "tankstopps": []
+  },
+  "lastSync": "2026-02-26T14:31:59.984Z"
 }
