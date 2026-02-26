@@ -1094,7 +1094,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v9 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v11 · 2026</p>
   </div>
 </header>
 
@@ -2689,13 +2689,11 @@ async function saveGitHubSettings() {
 }
 
 function mShowDiag(msg, color) {
+  const overlay = document.getElementById('m-diag-overlay');
   const box = document.getElementById('m-diag-box');
-  if (!box) return;
-  box.style.display = 'block';
-  box.style.borderColor = color || '#c8973a';
-  const time = new Date().toLocaleTimeString('de-AT');
-  box.innerHTML += '<div style="margin-bottom:4px"><span style="color:rgba(200,151,58,0.5)">' + time + '</span> ' + msg + '</div>';
-  box.scrollTop = box.scrollHeight;
+  if (!box || !overlay) return;
+  overlay.style.display = 'block';
+  box.innerHTML += '<div style="padding:10px 0;border-bottom:1px solid rgba(200,151,58,0.15);color:' + (color||'#f0ebe0') + '">' + msg + '</div>';
 }
 
 async function mSaveGitHub() {
@@ -3207,7 +3205,11 @@ function esc(str) {
       <div class="m-field"><label>Personal Access Token</label><input type="password" id="ms-gh-token" placeholder="ghp_xxxx…"></div>
       <button class="m-big-btn" onclick="mSaveGitHub()" style="margin-bottom:8px;">🔗 Verbinden &amp; testen</button>
       <button class="m-big-btn secondary" onclick="syncNow().then(()=>mShowDiag('Sync abgeschlossen')).catch(e=>mShowDiag('Fehler: '+e.message))" style="margin-bottom:8px;font-size:14px;padding:14px;">↺ Jetzt synchronisieren</button>
-      <div id="m-diag-box" style="display:none;background:#0d0d0f;border:2px solid #c8973a;border-radius:10px;padding:14px;margin-top:12px;font-size:12px;color:#f0ebe0;line-height:1.6;word-break:break-all;"></div>
+      <div id="m-diag-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:#0d0d0f;padding:30px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+        <div style="font-family:'Playfair Display',serif;color:#c8973a;font-size:20px;margin-bottom:20px;">🔗 GitHub Verbindung</div>
+        <div id="m-diag-box" style="font-size:16px;color:#f0ebe0;line-height:2.2;word-break:break-all;"></div>
+        <button onclick="document.getElementById('m-diag-overlay').style.display='none'" style="margin-top:30px;width:100%;background:#c8973a;color:#0d0d0f;border:none;border-radius:12px;font-size:18px;font-family:'Playfair Display',serif;padding:18px;cursor:pointer;">✕ Schließen</button>
+      </div>
     </div>
     <div class="m-settings-section">
       <h3>📂 Daten</h3>
