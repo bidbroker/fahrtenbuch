@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1772116539570,
+      "datum": "2026-02-26",
+      "zweck": "Einkauf",
+      "von": "Gablitz",
+      "bis": "Ollern",
+      "kmStart": 26450,
+      "timeStart": "15:35",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "Waschen | Immer noch net sauber",
+      "tankstopps": [],
+      "kmEnd": 26470,
+      "strecke": 20,
+      "timeEnd": "15:35",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1772116457694,
       "datum": "2026-02-26",
       "zweck": "probieren2222",
@@ -1123,5 +1141,5 @@
     "bemerkung": "Waschen",
     "tankstopps": []
   },
-  "lastSync": "2026-02-26T14:35:39.571Z"
+  "lastSync": "2026-02-26T14:36:41.966Z"
 }
