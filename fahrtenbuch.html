@@ -1094,7 +1094,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v16 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v17 · 2026</p>
   </div>
 </header>
 
@@ -1412,6 +1412,7 @@ let fahrten    = JSON.parse(ls.get('fahrtenbuch_fahrten') || '[]');
 let settings   = JSON.parse(ls.get('fahrtenbuch_settings') || '{}');
 let offeneFahrt = JSON.parse(ls.get('fahrtenbuch_offen') || 'null');
 let ghConfig   = JSON.parse(ls.get('fahrtenbuch_github') || 'null');
+const GH_FILE  = 'fahrtenbuch_data.json';
 let editingId = null;
 let tankCounter = 0;
 let editTankCounter = 0;
@@ -2637,7 +2638,6 @@ window.addEventListener('resize', () => {
 // ══════════════════════════════════════════════════════
 
 // ghConfig declared at top of script
-const GH_FILE = 'fahrtenbuch_data.json';
 
 // ── Helpers ──
 function ghHeaders() {
