@@ -1110,6 +1110,18 @@
     "motor": "",
     "sub": ""
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-02-26T14:34:43.525Z"
+  "offeneFahrt": {
+    "id": 1772116539570,
+    "datum": "2026-02-26",
+    "zweck": "Einkauf",
+    "von": "Gablitz",
+    "bis": "Ollern",
+    "kmStart": 26450,
+    "timeStart": "15:35",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "Andrea",
+    "bemerkung": "Waschen",
+    "tankstopps": []
+  },
+  "lastSync": "2026-02-26T14:35:39.571Z"
 }
