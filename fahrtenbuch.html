@@ -1094,7 +1094,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v11 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v12 · 2026</p>
   </div>
 </header>
 
@@ -2711,8 +2711,13 @@ async function mSaveGitHub() {
   if (!token) { mShowDiag('⚠ Token fehlt!',        '#e74c3c'); return; }
 
   ghConfig = { user, repo, token };
-  localStorage.setItem('fahrtenbuch_github', JSON.stringify(ghConfig));
-  mShowDiag('✓ Config gespeichert');
+  try {
+    localStorage.setItem('fahrtenbuch_github', JSON.stringify(ghConfig));
+    mShowDiag('✓ Config gespeichert (localStorage OK)');
+  } catch(lsErr) {
+    mShowDiag('⚠ localStorage Fehler: ' + lsErr.message + ' — iOS Privater Modus?', '#e74c3c');
+    mShowDiag('Versuche trotzdem Verbindung…');
+  }
   setSyncBadge('busy', 'Verbinde…');
 
   try {
