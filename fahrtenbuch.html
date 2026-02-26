@@ -1094,7 +1094,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v15 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v16 · 2026</p>
   </div>
 </header>
 
@@ -2782,28 +2782,42 @@ async function mSaveGitHub() {
 async function loadFromGitHub() {
   if (!ghConfig) return false;
   try {
-    setSyncBadge('busy', 'Lade Daten von GitHub…');
+    setSyncBadge('busy', 'Lade Daten…');
     const res = await fetch(ghApiUrl(), { headers: ghHeaders() });
+    mShowDiag('Datei HTTP: ' + res.status);
+
     if (res.status === 404) {
-      // Datei existiert noch nicht — das ist OK beim ersten Mal
-      setSyncBadge('ok', ghConfig.user + '/' + ghConfig.repo + ' · Bereit (neue Datei)');
+      mShowDiag('✓ Noch keine Datei — wird beim ersten Speichern angelegt.');
+      setSyncBadge('ok', 'Bereit');
       return true;
     }
     if (!res.ok) throw new Error('HTTP ' + res.status);
+
     const data = await res.json();
-    const decoded = JSON.parse(fromBase64(data.content.replace(/[\n\r]/g, '')));
-    // Merge: GitHub-Daten sind die Quelle der Wahrheit
+    mShowDiag('✓ JSON empfangen, decodiere…');
+
+    const raw = data.content.replace(/[\n\r]/g, '');
+    mShowDiag('Base64 Länge: ' + raw.length);
+
+    const jsonStr = fromBase64(raw);
+    mShowDiag('✓ Decoded, parse JSON…');
+
+    const decoded = JSON.parse(jsonStr);
+    mShowDiag('✓ Parsed: ' + (decoded.fahrten||[]).length + ' Fahrten gefunden');
+
     fahrten = decoded.fahrten || [];
     settings = decoded.settings || settings;
     if (decoded.offeneFahrt) offeneFahrt = decoded.offeneFahrt;
-    save();
+
+    saveFahrtenLocal();
     ls.set('fahrtenbuch_settings', JSON.stringify(settings));
     applySettings();
     setSyncBadge('ok', 'Geladen: ' + new Date().toLocaleTimeString('de-AT'));
+    mShowDiag('✓ Daten geladen!', '#4caf50');
     return true;
   } catch(e) {
-    setSyncBadge('err', 'Fehler: ' + e.message);
-    showToast('⚠ GitHub-Fehler: ' + e.message);
+    mShowDiag('⚠ Fehler: ' + e.message, '#e74c3c');
+    setSyncBadge('err', e.message);
     return false;
   }
 }
