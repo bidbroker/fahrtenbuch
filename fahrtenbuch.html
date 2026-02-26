@@ -1094,7 +1094,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v14 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v15 · 2026</p>
   </div>
 </header>
 
@@ -2791,7 +2791,7 @@ async function loadFromGitHub() {
     }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const decoded = JSON.parse(atob(data.content.replace(/\n/g, '')));
+    const decoded = JSON.parse(fromBase64(data.content.replace(/[\n\r]/g, '')));
     // Merge: GitHub-Daten sind die Quelle der Wahrheit
     fahrten = decoded.fahrten || [];
     settings = decoded.settings || settings;
@@ -2813,6 +2813,12 @@ async function loadFromGitHub() {
 function toBase64(str) {
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
     (match, p1) => String.fromCharCode('0x' + p1)));
+}
+
+function fromBase64(b64) {
+  return decodeURIComponent(Array.from(atob(b64))
+    .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2,'0'))
+    .join(''));
 }
 
 async function getGitHubSHA() {
