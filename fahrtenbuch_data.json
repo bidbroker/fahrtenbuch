@@ -14,9 +14,15 @@
       "fahrer": "Christian Rapberger",
       "mitfahrer": "",
       "bemerkung": "regen | reifen platt",
-      "tankstopps": [],
-      "gesamtLiter": 0,
-      "verbrauch": null
+      "tankstopps": [
+        {
+          "ort": "jet",
+          "km": 26444,
+          "liter": 20
+        }
+      ],
+      "gesamtLiter": 20,
+      "verbrauch": "250.0"
     },
     {
       "id": 1755993600058,
@@ -1087,5 +1093,5 @@
     "sub": ""
   },
   "offeneFahrt": null,
-  "lastSync": "2026-02-26T14:32:33.835Z"
+  "lastSync": "2026-02-26T14:33:20.000Z"
 }
