@@ -1095,7 +1095,7 @@
     </div>
     <h1 id="car-title">Fahrtenbuch</h1>
     <p class="masthead-sub" id="car-subtitle">Persönliches Oldtimer-Fahrtenbuch</p>
-  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v22 · 2026</p>
+  <p style="color:rgba(200,151,58,0.35);font-size:10px;letter-spacing:1px;margin-top:4px;" id="app-version">v25 · 2026</p>
   </div>
 </header>
 
@@ -1514,7 +1514,7 @@ function collectTankStops(listId) {
 // ═══════════════════════════════ FORM SUBMIT — 2-PHASEN ═══════════════════════════════
 
 // PHASE 1: Abfahrt starten
-document.getElementById('abfahrt-form').addEventListener('submit', e => {
+(document.getElementById('abfahrt-form')||{addEventListener:()=>{}}).addEventListener('submit', e => {
   e.preventDefault();
   try {
     offeneFahrt = {
@@ -1545,7 +1545,7 @@ document.getElementById('abfahrt-form').addEventListener('submit', e => {
 });
 
 // PHASE 2: Ankunft speichern
-document.getElementById('ankunft-form').addEventListener('submit', e => {
+(document.getElementById('ankunft-form')||{addEventListener:()=>{}}).addEventListener('submit', e => {
   e.preventDefault();
   try {
     if (!offeneFahrt) return;
@@ -1917,7 +1917,7 @@ function editFahrt(id) {
   document.getElementById('edit-modal').classList.add('open');
 }
 
-document.getElementById('edit-form').addEventListener('submit', e => {
+(document.getElementById('edit-form')||{addEventListener:()=>{}}).addEventListener('submit', e => {
   e.preventDefault();
   const idx = fahrten.findIndex(x => x.id === editingId);
   if (idx === -1) return;
@@ -1957,7 +1957,7 @@ function closeModal() {
 }
 
 // Click outside to close
-document.getElementById('edit-modal').addEventListener('click', e => {
+(document.getElementById('edit-modal')||{addEventListener:()=>{}}).addEventListener('click', e => {
   if (e.target === e.currentTarget) closeModal();
 });
 
@@ -2092,9 +2092,11 @@ function clearAllYears() {
 }
 
 // ═══════════════════════════════ INIT ═══════════════════════════════
-applySettings();
-renderNeuPage();
-setFormDefaults();
+document.addEventListener('DOMContentLoaded', function() {
+  applySettings();
+  renderNeuPage();
+  setFormDefaults();
+});
 
 function setFormDefaults() {
   // Nur befüllen wenn kein offener Trip läuft
@@ -2627,11 +2629,10 @@ function mInit() {
   mRenderHome();
 }
 
-// Mobile init starten (nur wenn Mobile-UI sichtbar)
-if (window.innerWidth <= 767) {
-  mInit();
-}
-window.addEventListener('resize', () => {
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.innerWidth <= 767) mInit();
+});
+window.addEventListener('resize', function() {
   if (window.innerWidth <= 767) mInit();
 });
 
@@ -2777,11 +2778,19 @@ async function loadFromGitHub() {
 
     const data = await res.json();
 
-    const raw = data.content.replace(/[\n\r]/g, '');
-
-    const jsonStr = fromBase64(raw);
-
-    const decoded = JSON.parse(jsonStr);
+    const raw = data.content.replace(/[\n\r\s]/g, '');
+    let decoded;
+    try {
+      const jsonStr = fromBase64(raw);
+      decoded = JSON.parse(jsonStr);
+    } catch(decodeErr) {
+      // Try plain atob as fallback
+      try {
+        decoded = JSON.parse(atob(raw));
+      } catch(e2) {
+        throw new Error('Decode-Fehler: ' + decodeErr.message);
+      }
+    }
 
     fahrten = decoded.fahrten || [];
     settings = decoded.settings || settings;
@@ -2907,19 +2916,25 @@ function saveOffen() {
 
 // ── GitHub Init: load on startup ──
 async function initGitHubSync() {
-  if (!ghConfig) {
-    setSyncBadge('off', 'Nicht konfiguriert — Daten werden lokal gespeichert.');
-    return;
+  try {
+    if (!ghConfig) {
+      setSyncBadge('off', 'Nicht konfiguriert — Daten werden lokal gespeichert.');
+      return;
+    }
+    loadGitHubSettings();
+    await loadFromGitHub();
+    try { if (document.getElementById('entries-list')) renderBuch(); } catch(e) {}
+    try { if (window.innerWidth <= 767) { mRenderHome(); mRenderBuch(); } } catch(e) {}
+  } catch(e) {
+    console.error('initGitHubSync error:', e);
+    setSyncBadge('err', 'Init-Fehler: ' + e.message);
   }
-  loadGitHubSettings();
-  await loadFromGitHub();
-  // Re-render after loading
-  if (document.getElementById('entries-list')) renderBuch();
-  if (window.innerWidth <= 767) mRenderHome();
 }
 
-// Run on page load
-initGitHubSync();
+// Run on page load — wrapped so crashes never affect UI
+setTimeout(function() {
+  try { initGitHubSync(); } catch(e) { console.error('GitHub init failed:', e); }
+}, 100);
 
 
 // ══════════════════════════════════════════════════════
