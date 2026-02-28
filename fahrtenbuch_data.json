@@ -1139,7 +1139,15 @@
     "fahrer": "Andrea Rapberger",
     "mitfahrer": "Christian",
     "bemerkung": "Mondschein",
-    "tankstopps": []
+    "tankstopps": [
+      {
+        "time": "20:30",
+        "ort": "",
+        "km": 0,
+        "liter": 8,
+        "bemerkung": "2"
+      }
+    ]
   },
-  "lastSync": "2026-02-28T19:29:41.693Z"
+  "lastSync": "2026-02-28T19:30:27.053Z"
 }
