@@ -1180,26 +1180,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1772306981687,
-    "datum": "2026-02-28",
-    "zweck": "Verdauungsfahrt",
-    "von": "Zauchensee",
-    "bis": "Obertauern",
-    "kmStart": 26470,
-    "timeStart": "20:28",
-    "fahrer": "Andrea Rapberger",
-    "mitfahrer": "Christian",
-    "bemerkung": "Mondschein",
-    "tankstopps": [
-      {
-        "time": "20:30",
-        "ort": "",
-        "km": 0,
-        "liter": 8,
-        "bemerkung": "2"
-      }
-    ]
-  },
-  "lastSync": "2026-03-04T06:59:37.521Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-03-04T06:59:37.525Z"
 }
