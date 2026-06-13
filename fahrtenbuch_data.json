@@ -89,30 +89,6 @@
       "verbrauch": null
     },
     {
-      "id": 1772116319983,
-      "datum": "2026-02-26",
-      "zweck": "probieren",
-      "von": "Gablitz",
-      "bis": "Testort",
-      "kmStart": 26442,
-      "kmEnd": 26450,
-      "strecke": 8,
-      "timeStart": "15:29",
-      "timeEnd": "15:31",
-      "fahrer": "Christian Rapberger",
-      "mitfahrer": "",
-      "bemerkung": "regen | reifen platt",
-      "tankstopps": [
-        {
-          "ort": "jet",
-          "km": 26444,
-          "liter": 20
-        }
-      ],
-      "gesamtLiter": 20,
-      "verbrauch": "250.0"
-    },
-    {
       "id": 1755993600058,
       "datum": "2025-08-24",
       "zweck": "mama besuch",
@@ -1181,5 +1157,5 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": null,
-  "lastSync": "2026-03-04T06:59:37.525Z"
+  "lastSync": "2026-06-13T06:32:57.723Z"
 }
