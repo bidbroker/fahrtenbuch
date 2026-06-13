@@ -53,24 +53,6 @@
       "verbrauch": "66.7"
     },
     {
-      "id": 1772116539570,
-      "datum": "2026-02-26",
-      "zweck": "Einkauf",
-      "von": "Gablitz",
-      "bis": "Ollern",
-      "kmStart": 26450,
-      "timeStart": "15:35",
-      "fahrer": "Christian Rapberger",
-      "mitfahrer": "Andrea",
-      "bemerkung": "Waschen | Immer noch net sauber",
-      "tankstopps": [],
-      "kmEnd": 26470,
-      "strecke": 20,
-      "timeEnd": "15:35",
-      "gesamtLiter": 0,
-      "verbrauch": null
-    },
-    {
       "id": 1772116457694,
       "datum": "2026-02-26",
       "zweck": "probieren2222",
@@ -1157,5 +1139,5 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": null,
-  "lastSync": "2026-06-13T06:32:57.723Z"
+  "lastSync": "2026-06-13T06:33:06.214Z"
 }
