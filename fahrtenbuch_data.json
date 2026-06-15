@@ -14,7 +14,7 @@
       "tankstopps": [],
       "kmEnd": 26444,
       "strecke": 2,
-      "timeEnd": "13:16",
+      "timeEnd": "10:28",
       "gesamtLiter": 0,
       "verbrauch": null
     },
@@ -1087,5 +1087,5 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": null,
-  "lastSync": "2026-06-15T11:17:18.790Z"
+  "lastSync": "2026-06-15T11:17:51.195Z"
 }
