@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1781332978701,
+      "datum": "2026-06-13",
+      "zweck": "Pickerl",
+      "von": "Gablitz",
+      "bis": "Gablitz ZI Motors",
+      "kmStart": 26442,
+      "timeStart": "09:50",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "Feucht nach langem Regen | Pickerl ok bis 3/28",
+      "tankstopps": [],
+      "kmEnd": 26444,
+      "strecke": 2,
+      "timeEnd": "13:16",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1755993600058,
       "datum": "2025-08-24",
       "zweck": "mama besuch",
@@ -1081,5 +1099,5 @@
     "bemerkung": "Feucht nach langem Regen",
     "tankstopps": []
   },
-  "lastSync": "2026-06-13T06:42:58.701Z"
+  "lastSync": "2026-06-15T11:17:18.788Z"
 }
