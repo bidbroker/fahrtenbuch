@@ -1086,18 +1086,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1781332978701,
-    "datum": "2026-06-13",
-    "zweck": "Pickerl",
-    "von": "Gablitz",
-    "bis": "Gablitz ZI Motors",
-    "kmStart": 26442,
-    "timeStart": "09:50",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
-    "bemerkung": "Feucht nach langem Regen",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-15T11:17:18.788Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-15T11:17:18.790Z"
 }
