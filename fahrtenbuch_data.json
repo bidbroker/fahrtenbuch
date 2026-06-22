@@ -12,6 +12,24 @@
       "mitfahrer": "Andrea",
       "bemerkung": "",
       "tankstopps": [],
+      "kmEnd": 26464,
+      "strecke": 20,
+      "timeEnd": "16:13",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
+      "id": 1782051059621,
+      "datum": "2026-06-21",
+      "zweck": "Sightseeing",
+      "von": "Jesolo",
+      "bis": "Rundkurs",
+      "kmStart": 26444,
+      "timeStart": "16:10",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
       "kmEnd": 26468,
       "strecke": 24,
       "timeEnd": "19:06",
@@ -1117,5 +1135,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-06-22T14:06:34.598Z"
+  "lastSync": "2026-06-22T14:14:02.143Z"
 }
