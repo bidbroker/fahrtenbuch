@@ -7,7 +7,7 @@
       "von": "Jesolo",
       "bis": "Schlosser / Schlüssel Duplikate",
       "kmStart": 26444,
-      "timeStart": "16:10",
+      "timeStart": "15:29",
       "fahrer": "Christian Rapberger",
       "mitfahrer": "Andrea",
       "bemerkung": "",
@@ -1123,5 +1123,5 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": null,
-  "lastSync": "2026-06-22T16:28:50.328Z"
+  "lastSync": "2026-06-22T16:29:16.792Z"
 }
