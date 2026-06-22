@@ -5,15 +5,15 @@
       "datum": "2026-06-21",
       "zweck": "Sightseeing",
       "von": "Jesolo",
-      "bis": "Rundkurs",
+      "bis": "Schlosser / Schlüssel Duplikate",
       "kmStart": 26444,
       "timeStart": "16:10",
       "fahrer": "Christian Rapberger",
       "mitfahrer": "Andrea",
       "bemerkung": "",
       "tankstopps": [],
-      "kmEnd": 26464,
-      "strecke": 20,
+      "kmEnd": 26488,
+      "strecke": 44,
       "timeEnd": "16:13",
       "gesamtLiter": 0,
       "verbrauch": null
@@ -1123,5 +1123,5 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": null,
-  "lastSync": "2026-06-22T14:14:02.145Z"
+  "lastSync": "2026-06-22T16:28:50.328Z"
 }
