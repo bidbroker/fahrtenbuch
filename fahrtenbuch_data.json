@@ -1122,18 +1122,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782051059621,
-    "datum": "2026-06-21",
-    "zweck": "Sightseeing",
-    "von": "Jesolo",
-    "bis": "Rundkurs",
-    "kmStart": 26444,
-    "timeStart": "16:10",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-22T14:14:02.143Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-22T14:14:02.145Z"
 }
