@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1782051059621,
+      "datum": "2026-06-21",
+      "zweck": "Sightseeing",
+      "von": "Jesolo",
+      "bis": "Rundkurs",
+      "kmStart": 26444,
+      "timeStart": "16:10",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26468,
+      "strecke": 24,
+      "timeEnd": "19:06",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1781332978701,
       "datum": "2026-06-13",
       "zweck": "Pickerl",
@@ -1086,18 +1104,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782051059621,
-    "datum": "2026-06-21",
-    "zweck": "Sightseeing",
-    "von": "Jesolo",
-    "bis": "Rundkurs",
-    "kmStart": 26444,
-    "timeStart": "16:10",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-21T14:10:59.622Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-22T14:06:34.600Z"
 }
