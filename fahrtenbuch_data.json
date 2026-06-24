@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1782302778077,
+      "datum": "2026-06-23",
+      "zweck": "Deko für Appartement kaufen",
+      "von": "Jesolo",
+      "bis": "Bricook",
+      "kmStart": 26488,
+      "timeStart": "15:04",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26506,
+      "strecke": 18,
+      "timeEnd": "21:06",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1782051059621,
       "datum": "2026-06-21",
       "zweck": "Sightseeing",
@@ -1122,18 +1140,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782302778077,
-    "datum": "2026-06-23",
-    "zweck": "Deko für Appartement kaufen",
-    "von": "Jesolo",
-    "bis": "Bricook",
-    "kmStart": 26488,
-    "timeStart": "15:04",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-24T12:06:18.077Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-24T12:06:51.647Z"
 }
