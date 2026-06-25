@@ -1,6 +1,32 @@
 {
   "fahrten": [
     {
+      "id": 1782399843434,
+      "datum": "2026-06-25",
+      "zweck": "Rollladen Ersatzteile",
+      "von": "Jesolo",
+      "bis": "Baumarkt",
+      "kmStart": 26534,
+      "timeStart": "17:03",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [
+        {
+          "time": "18:46",
+          "ort": "Jesolo IP",
+          "km": 26544,
+          "liter": 9,
+          "bemerkung": "10ml"
+        }
+      ],
+      "kmEnd": 26585,
+      "strecke": 51,
+      "timeEnd": "20:36",
+      "gesamtLiter": 9,
+      "verbrauch": "17.6"
+    },
+    {
       "id": 1782302874164,
       "datum": "2026-06-24",
       "zweck": "Eckventile Küche",
@@ -1179,5 +1205,5 @@
       }
     ]
   },
-  "lastSync": "2026-06-25T16:47:13.284Z"
+  "lastSync": "2026-06-25T18:37:05.097Z"
 }
