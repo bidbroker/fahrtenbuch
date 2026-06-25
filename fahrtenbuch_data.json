@@ -5,7 +5,7 @@
       "datum": "2026-06-25",
       "zweck": "Rollladen Ersatzteile",
       "von": "Jesolo",
-      "bis": "Baumarkt",
+      "bis": "Pinto Sabbioni",
       "kmStart": 26534,
       "timeStart": "17:03",
       "fahrer": "Christian Rapberger",
@@ -1184,26 +1184,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782399843434,
-    "datum": "2026-06-25",
-    "zweck": "Rollladen Ersatzteile",
-    "von": "Jesolo",
-    "bis": "Baumarkt",
-    "kmStart": 26534,
-    "timeStart": "17:03",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": [
-      {
-        "time": "18:46",
-        "ort": "Jesolo IP",
-        "km": 26544,
-        "liter": 9,
-        "bemerkung": "10ml"
-      }
-    ]
-  },
-  "lastSync": "2026-06-25T18:37:05.097Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-25T18:38:01.850Z"
 }
