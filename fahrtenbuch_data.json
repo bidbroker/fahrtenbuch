@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1782302874164,
+      "datum": "2026-06-24",
+      "zweck": "Eckventile Küche",
+      "von": "Jesolo",
+      "bis": "Zanutta",
+      "kmStart": 26506,
+      "timeStart": "14:06",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26534,
+      "strecke": 28,
+      "timeEnd": "17:00",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1782302778077,
       "datum": "2026-06-23",
       "zweck": "Deko für Appartement kaufen",
@@ -1153,5 +1171,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-06-24T12:07:54.164Z"
+  "lastSync": "2026-06-25T15:01:19.766Z"
 }
