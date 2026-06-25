@@ -1158,6 +1158,18 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-06-25T15:02:58.491Z"
+  "offeneFahrt": {
+    "id": 1782399843434,
+    "datum": "2026-06-25",
+    "zweck": "Rollladen Ersatzteile",
+    "von": "Jesolo",
+    "bis": "Baumarkt",
+    "kmStart": 26534,
+    "timeStart": "17:03",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "Andrea",
+    "bemerkung": "",
+    "tankstopps": []
+  },
+  "lastSync": "2026-06-25T15:04:03.434Z"
 }
