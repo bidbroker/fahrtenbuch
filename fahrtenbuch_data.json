@@ -1158,18 +1158,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782302874164,
-    "datum": "2026-06-24",
-    "zweck": "Eckventile Küche",
-    "von": "Jesolo",
-    "bis": "Zanutta",
-    "kmStart": 26506,
-    "timeStart": "14:06",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-25T15:01:19.766Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-25T15:01:19.768Z"
 }
