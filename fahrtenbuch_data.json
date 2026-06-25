@@ -1169,7 +1169,15 @@
     "fahrer": "Christian Rapberger",
     "mitfahrer": "Andrea",
     "bemerkung": "",
-    "tankstopps": []
+    "tankstopps": [
+      {
+        "time": "18:46",
+        "ort": "Jesolo IP",
+        "km": 26544,
+        "liter": 9,
+        "bemerkung": "10ml"
+      }
+    ]
   },
-  "lastSync": "2026-06-25T15:04:03.434Z"
+  "lastSync": "2026-06-25T16:47:13.284Z"
 }
