@@ -1221,17 +1221,17 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": {
-    "id": 1782596656794,
-    "datum": "2026-06-27",
-    "zweck": "Sutto Wine tastend / Damm",
-    "von": "Jesolo",
-    "bis": "Cortalezzo",
-    "kmStart": 26585,
-    "timeStart": "15:09",
+    "id": 1782748448136,
+    "datum": "2026-06-29",
+    "zweck": "Einkaufen",
+    "von": "Gablitz",
+    "bis": "Purkersdorf",
+    "kmStart": 26620,
+    "timeStart": "17:53",
     "fahrer": "Christian Rapberger",
     "mitfahrer": "Andrea",
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-06-29T15:53:22.984Z"
+  "lastSync": "2026-06-29T15:54:08.136Z"
 }
