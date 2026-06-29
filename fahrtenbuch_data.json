@@ -14,6 +14,24 @@
       "tankstopps": [],
       "kmEnd": 26620,
       "strecke": 35,
+      "timeEnd": "19:52",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
+      "id": 1782596656794,
+      "datum": "2026-06-27",
+      "zweck": "Sutto Wine tastend / Damm",
+      "von": "Jesolo",
+      "bis": "Cortalezzo",
+      "kmStart": 26585,
+      "timeStart": "15:09",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26620,
+      "strecke": 35,
       "timeEnd": "19:44",
       "gesamtLiter": 0,
       "verbrauch": null
@@ -1202,18 +1220,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782596656794,
-    "datum": "2026-06-27",
-    "zweck": "Sutto Wine tastend / Damm",
-    "von": "Jesolo",
-    "bis": "Cortalezzo",
-    "kmStart": 26585,
-    "timeStart": "15:09",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-27T21:45:11.947Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-29T15:53:22.986Z"
 }
