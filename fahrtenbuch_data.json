@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1782748448136,
+      "datum": "2026-06-29",
+      "zweck": "Einkaufen",
+      "von": "Gablitz",
+      "bis": "Purkersdorf",
+      "kmStart": 26620,
+      "timeStart": "17:53",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26627,
+      "strecke": 7,
+      "timeEnd": "17:54",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1782596656794,
       "datum": "2026-06-27",
       "zweck": "Sutto Wine tastend / Damm",
@@ -1220,18 +1238,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782748448136,
-    "datum": "2026-06-29",
-    "zweck": "Einkaufen",
-    "von": "Gablitz",
-    "bis": "Purkersdorf",
-    "kmStart": 26620,
-    "timeStart": "17:53",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-29T15:54:08.136Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-06-29T16:36:04.784Z"
 }
