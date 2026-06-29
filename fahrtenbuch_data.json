@@ -1220,6 +1220,18 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-06-29T15:53:22.986Z"
+  "offeneFahrt": {
+    "id": 1782596656794,
+    "datum": "2026-06-27",
+    "zweck": "Sutto Wine tastend / Damm",
+    "von": "Jesolo",
+    "bis": "Cortalezzo",
+    "kmStart": 26585,
+    "timeStart": "15:09",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "Andrea",
+    "bemerkung": "",
+    "tankstopps": []
+  },
+  "lastSync": "2026-06-29T15:53:22.984Z"
 }
