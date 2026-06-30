@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1782808994139,
+      "datum": "2026-06-30",
+      "zweck": "Einkaufen",
+      "von": "Gablitz",
+      "bis": "Purkersorf",
+      "kmStart": 26627,
+      "timeStart": "10:42",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "Apotheke Abholung",
+      "tankstopps": [],
+      "kmEnd": 26637,
+      "strecke": 10,
+      "timeEnd": "15:42",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1782748448136,
       "datum": "2026-06-29",
       "zweck": "Einkaufen",
@@ -1251,5 +1269,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-06-30T08:43:14.142Z"
+  "lastSync": "2026-06-30T13:42:51.824Z"
 }
