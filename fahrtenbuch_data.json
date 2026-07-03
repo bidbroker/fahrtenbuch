@@ -1275,17 +1275,17 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": {
-    "id": 1782808994139,
-    "datum": "2026-06-30",
-    "zweck": "Einkaufen",
+    "id": 1783097421251,
+    "datum": "2026-07-03",
+    "zweck": "Einkauf grill",
     "von": "Gablitz",
-    "bis": "Purkersorf",
-    "kmStart": 26627,
-    "timeStart": "10:42",
+    "bis": "Purkersdorf",
+    "kmStart": 26637,
+    "timeStart": "18:49",
     "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
+    "mitfahrer": "Andrea",
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-07-03T16:49:32.678Z"
+  "lastSync": "2026-07-03T16:50:21.252Z"
 }
