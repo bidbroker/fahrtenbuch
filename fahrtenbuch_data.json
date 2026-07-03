@@ -10,6 +10,24 @@
       "timeStart": "10:42",
       "fahrer": "Christian Rapberger",
       "mitfahrer": "",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26637,
+      "strecke": 10,
+      "timeEnd": "16:49",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
+      "id": 1782808994139,
+      "datum": "2026-06-30",
+      "zweck": "Einkaufen",
+      "von": "Gablitz",
+      "bis": "Purkersorf",
+      "kmStart": 26627,
+      "timeStart": "10:42",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
       "bemerkung": "Apotheke Abholung",
       "tankstopps": [],
       "kmEnd": 26637,
@@ -1256,18 +1274,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1782808994139,
-    "datum": "2026-06-30",
-    "zweck": "Einkaufen",
-    "von": "Gablitz",
-    "bis": "Purkersorf",
-    "kmStart": 26627,
-    "timeStart": "10:42",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-06-30T13:42:51.824Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-07-03T16:49:32.681Z"
 }
