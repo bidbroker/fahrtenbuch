@@ -1,6 +1,24 @@
 {
   "fahrten": [
     {
+      "id": 1783153167254,
+      "datum": "2026-07-04",
+      "zweck": "Einkauf",
+      "von": "Gablitz",
+      "bis": "Purkersdorf",
+      "kmStart": 26644,
+      "timeStart": "10:18",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26651,
+      "strecke": 7,
+      "timeEnd": "11:12",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1783097421251,
       "datum": "2026-07-03",
       "zweck": "Einkauf grill",
@@ -1292,18 +1310,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1783153167254,
-    "datum": "2026-07-04",
-    "zweck": "Einkauf",
-    "von": "Gablitz",
-    "bis": "Purkersdorf",
-    "kmStart": 26644,
-    "timeStart": "10:18",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-07-04T08:19:27.255Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-07-04T09:13:03.959Z"
 }
