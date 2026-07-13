@@ -1,6 +1,32 @@
 {
   "fahrten": [
     {
+      "id": 1783951768805,
+      "datum": "2026-07-13",
+      "zweck": "Shopping",
+      "von": "Gablitz",
+      "bis": "Wien",
+      "kmStart": 26653,
+      "timeStart": "16:08",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [
+        {
+          "time": "16:20",
+          "ort": "",
+          "km": 26655,
+          "liter": 8.24,
+          "bemerkung": "9"
+        }
+      ],
+      "kmEnd": 26680,
+      "strecke": 27,
+      "timeEnd": "16:22",
+      "gesamtLiter": 8.24,
+      "verbrauch": "30.5"
+    },
+    {
       "id": 1783415095282,
       "datum": "2026-07-07",
       "zweck": "Gemeindeamt",
@@ -1367,5 +1393,5 @@
       }
     ]
   },
-  "lastSync": "2026-07-13T14:20:42.099Z"
+  "lastSync": "2026-07-13T17:30:02.309Z"
 }
