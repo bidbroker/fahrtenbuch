@@ -14,6 +14,24 @@
       "tankstopps": [],
       "kmEnd": 26653,
       "strecke": 2,
+      "timeEnd": "16:08",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
+      "id": 1783415095282,
+      "datum": "2026-07-07",
+      "zweck": "Gemeindeamt",
+      "von": "Gablitz",
+      "bis": "Gablitz",
+      "kmStart": 26651,
+      "timeStart": "11:04",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26653,
+      "strecke": 2,
       "timeEnd": "11:30",
       "gesamtLiter": 0,
       "verbrauch": null
@@ -1328,18 +1346,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1783415095282,
-    "datum": "2026-07-07",
-    "zweck": "Gemeindeamt",
-    "von": "Gablitz",
-    "bis": "Gablitz",
-    "kmStart": 26651,
-    "timeStart": "11:04",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-07-07T09:21:36.779Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-07-13T14:08:51.366Z"
 }
