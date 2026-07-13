@@ -1357,7 +1357,15 @@
     "fahrer": "Christian Rapberger",
     "mitfahrer": "Andrea",
     "bemerkung": "",
-    "tankstopps": []
+    "tankstopps": [
+      {
+        "time": "16:20",
+        "ort": "",
+        "km": 26655,
+        "liter": 8.24,
+        "bemerkung": "9"
+      }
+    ]
   },
-  "lastSync": "2026-07-13T14:09:28.805Z"
+  "lastSync": "2026-07-13T14:20:42.099Z"
 }
