@@ -1347,17 +1347,17 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": {
-    "id": 1783415095282,
-    "datum": "2026-07-07",
-    "zweck": "Gemeindeamt",
+    "id": 1783951768805,
+    "datum": "2026-07-13",
+    "zweck": "Shopping",
     "von": "Gablitz",
-    "bis": "Gablitz",
-    "kmStart": 26651,
-    "timeStart": "11:04",
+    "bis": "Wien",
+    "kmStart": 26653,
+    "timeStart": "16:08",
     "fahrer": "Christian Rapberger",
-    "mitfahrer": "",
+    "mitfahrer": "Andrea",
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-07-13T14:08:51.365Z"
+  "lastSync": "2026-07-13T14:09:28.805Z"
 }
