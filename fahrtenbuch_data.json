@@ -1372,26 +1372,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1783951768805,
-    "datum": "2026-07-13",
-    "zweck": "Shopping",
-    "von": "Gablitz",
-    "bis": "Wien",
-    "kmStart": 26653,
-    "timeStart": "16:08",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": [
-      {
-        "time": "16:20",
-        "ort": "",
-        "km": 26655,
-        "liter": 8.24,
-        "bemerkung": "9"
-      }
-    ]
-  },
-  "lastSync": "2026-07-13T17:30:02.309Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-07-13T17:30:02.321Z"
 }
