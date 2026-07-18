@@ -1480,6 +1480,18 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-07-18T15:53:30.588Z"
+  "offeneFahrt": {
+    "id": 1784389974237,
+    "datum": "2026-07-18",
+    "zweck": "Test",
+    "von": "Gablitz",
+    "bis": "Gablitz",
+    "kmStart": 26694,
+    "timeStart": "17:52",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "",
+    "bemerkung": "",
+    "tankstopps": []
+  },
+  "lastSync": "2026-07-18T15:53:30.587Z"
 }
