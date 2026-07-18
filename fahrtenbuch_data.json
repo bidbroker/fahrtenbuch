@@ -12,6 +12,24 @@
       "mitfahrer": "",
       "bemerkung": "",
       "tankstopps": [],
+      "kmEnd": 26696,
+      "strecke": 2,
+      "timeEnd": "17:55",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
+      "id": 1784389974237,
+      "datum": "2026-07-18",
+      "zweck": "Test",
+      "von": "Gablitz",
+      "bis": "Gablitz",
+      "kmStart": 26694,
+      "timeStart": "17:52",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "",
+      "tankstopps": [],
       "kmEnd": 26694,
       "strecke": 0,
       "timeEnd": "17:52",
@@ -1493,5 +1511,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-07-18T15:53:30.587Z"
+  "lastSync": "2026-07-18T15:55:19.284Z"
 }
