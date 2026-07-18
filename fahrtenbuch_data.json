@@ -12,9 +12,9 @@
       "mitfahrer": "Andrea",
       "bemerkung": "",
       "tankstopps": [],
-      "kmEnd": 26686,
-      "strecke": 6,
-      "timeEnd": "12:28",
+      "kmEnd": null,
+      "strecke": null,
+      "timeEnd": "",
       "gesamtLiter": 0,
       "verbrauch": null
     },
@@ -1403,5 +1403,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-07-18T11:04:52.656Z"
+  "lastSync": "2026-07-18T13:13:07.517Z"
 }
