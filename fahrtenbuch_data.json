@@ -1309,24 +1309,6 @@
       "timeEnd": "16:33",
       "gesamtLiter": 0,
       "verbrauch": null
-    },
-    {
-      "id": 1784389974237,
-      "datum": "2026-07-18",
-      "zweck": "Test",
-      "von": "Gablitz",
-      "bis": "Gablitz",
-      "kmStart": 26694,
-      "timeStart": "17:52",
-      "fahrer": "Christian Rapberger",
-      "mitfahrer": "",
-      "bemerkung": "",
-      "tankstopps": [],
-      "kmEnd": 26694,
-      "strecke": 0,
-      "timeEnd": "17:52",
-      "gesamtLiter": 0,
-      "verbrauch": null
     }
   ],
   "settings": {
@@ -1337,5 +1319,5 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": null,
-  "lastSync": "2026-07-18T15:55:19.288Z"
+  "lastSync": "2026-07-20T19:36:47.130Z"
 }
