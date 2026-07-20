@@ -2760,6 +2760,24 @@ async function mSaveGitHub() {
   }
 }
 
+// ── Deduplizierung: pro ID nur den letzten vollständigen Eintrag behalten ──
+function dedupFahrten(arr) {
+  const seen = {};
+  for (const f of arr) {
+    const prev = seen[f.id];
+    // Bevorzuge vollständigen Eintrag (kmEnd nicht null) gegenüber unvollständigem
+    if (!prev || (f.kmEnd != null && prev.kmEnd == null)) {
+      seen[f.id] = f;
+    } else if (f.kmEnd != null || prev.kmEnd == null) {
+      // beide vollständig oder beide unvollständig → letzter gewinnt
+      seen[f.id] = f;
+    }
+  }
+  return Object.values(seen).sort((a, b) =>
+    (a.datum + (a.timeStart || '')).localeCompare(b.datum + (b.timeStart || ''))
+  );
+}
+
 // ── Read from GitHub ──
 async function loadFromGitHub() {
   if (!ghConfig) return false;
@@ -2789,7 +2807,7 @@ async function loadFromGitHub() {
       }
     }
 
-    fahrten = decoded.fahrten || [];
+    fahrten = dedupFahrten(decoded.fahrten || []);
     if (decoded.settings && Object.keys(decoded.settings).length > 0) {
       settings = decoded.settings;
     }
@@ -2836,7 +2854,7 @@ async function saveToGitHub() {
     setSyncBadge('busy', 'Sync…');
 
     const payload = {
-      fahrten,
+      fahrten: dedupFahrten(fahrten),
       settings,
       offeneFahrt,
       lastSync: new Date().toISOString()
