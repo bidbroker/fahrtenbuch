@@ -1309,6 +1309,24 @@
       "timeEnd": "16:33",
       "gesamtLiter": 0,
       "verbrauch": null
+    },
+    {
+      "id": 1784623709928,
+      "datum": "2026-07-21",
+      "zweck": "Blumen kaufen",
+      "von": "Gablitz",
+      "bis": "Purkersdorf",
+      "kmStart": 26695,
+      "timeStart": "10:48",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26701,
+      "strecke": 6,
+      "timeEnd": "10:48",
+      "gesamtLiter": 0,
+      "verbrauch": null
     }
   ],
   "settings": {
@@ -1331,5 +1349,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-07-21T08:48:29.929Z"
+  "lastSync": "2026-07-21T09:14:22.329Z"
 }
