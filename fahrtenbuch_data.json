@@ -1354,18 +1354,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1784972667589,
-    "datum": "2026-07-25",
-    "zweck": "Einkaufen",
-    "von": "Gablitz",
-    "bis": "Purkersdorf",
-    "kmStart": 26701,
-    "timeStart": "11:43",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-07-25T10:19:55.272Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-07-25T10:21:25.696Z"
 }
