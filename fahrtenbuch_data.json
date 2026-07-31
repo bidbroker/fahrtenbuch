@@ -1345,6 +1345,24 @@
       "timeEnd": "12:35",
       "gesamtLiter": 0,
       "verbrauch": null
+    },
+    {
+      "id": 1785510014271,
+      "datum": "2026-07-31",
+      "zweck": "Neni",
+      "von": "Gablitz",
+      "bis": "Prater",
+      "kmStart": 26707,
+      "timeStart": "16:59",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26758,
+      "strecke": 51,
+      "timeEnd": "21:01",
+      "gesamtLiter": 0,
+      "verbrauch": null
     }
   ],
   "settings": {
@@ -1354,18 +1372,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1785510014271,
-    "datum": "2026-07-31",
-    "zweck": "Neni",
-    "von": "Gablitz",
-    "bis": "Prater",
-    "kmStart": 26707,
-    "timeStart": "16:59",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-07-31T15:00:14.272Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-07-31T19:01:41.698Z"
 }
