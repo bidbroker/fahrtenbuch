@@ -1363,6 +1363,24 @@
       "timeEnd": "21:01",
       "gesamtLiter": 0,
       "verbrauch": null
+    },
+    {
+      "id": 1785579091550,
+      "datum": "2026-08-01",
+      "zweck": "Einkaufen",
+      "von": "Gablitz",
+      "bis": "Purkersdorf",
+      "kmStart": 26758,
+      "timeStart": "12:10",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26765,
+      "strecke": 7,
+      "timeEnd": "13:01",
+      "gesamtLiter": 0,
+      "verbrauch": null
     }
   ],
   "settings": {
@@ -1385,5 +1403,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-08-01T10:11:31.550Z"
+  "lastSync": "2026-08-01T11:01:30.814Z"
 }
