@@ -1381,6 +1381,24 @@
       "timeEnd": "13:01",
       "gesamtLiter": 0,
       "verbrauch": null
+    },
+    {
+      "id": 1786786347817,
+      "datum": "2026-08-15",
+      "zweck": "Altblech Oldtimer Treffen",
+      "von": "Gablitz",
+      "bis": "Gablitz",
+      "kmStart": 26765,
+      "timeStart": "11:31",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "Super sonniger Tag | Lauter Oldtimer :)",
+      "tankstopps": [],
+      "kmEnd": 26768,
+      "strecke": 3,
+      "timeEnd": "11:32",
+      "gesamtLiter": 0,
+      "verbrauch": null
     }
   ],
   "settings": {
@@ -1390,18 +1408,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1786786347817,
-    "datum": "2026-08-15",
-    "zweck": "Altblech Oldtimer Treffen",
-    "von": "Gablitz",
-    "bis": "Gablitz",
-    "kmStart": 26765,
-    "timeStart": "11:31",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "Super sonniger Tag",
-    "tankstopps": []
-  },
-  "lastSync": "2026-08-15T09:32:27.820Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-08-15T10:07:06.758Z"
 }
