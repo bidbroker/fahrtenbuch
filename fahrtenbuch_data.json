@@ -1409,17 +1409,17 @@
     "sub": "VW Buggy Rot / Historisch"
   },
   "offeneFahrt": {
-    "id": 1786786347817,
-    "datum": "2026-08-15",
-    "zweck": "Altblech Oldtimer Treffen",
+    "id": 1787916260567,
+    "datum": "2026-08-28",
+    "zweck": "Einkaufen",
     "von": "Gablitz",
-    "bis": "Gablitz",
-    "kmStart": 26765,
-    "timeStart": "11:31",
+    "bis": "Purkersdorf",
+    "kmStart": 26768,
+    "timeStart": "13:23",
     "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "Super sonniger Tag",
+    "mitfahrer": "",
+    "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-08-28T11:23:25.013Z"
+  "lastSync": "2026-08-28T11:24:20.567Z"
 }
