@@ -1452,26 +1452,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1790704295663,
-    "datum": "2026-09-28",
-    "zweck": "Einkaufen",
-    "von": "Jesolo",
-    "bis": "Brico",
-    "kmStart": 26772,
-    "timeStart": "15:49",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "Sonne",
-    "tankstopps": [
-      {
-        "time": "17:01",
-        "ort": "Jesolo Esso",
-        "km": 26778,
-        "liter": 10,
-        "bemerkung": ""
-      }
-    ]
-  },
-  "lastSync": "2026-09-29T17:53:09.672Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-09-29T17:53:09.673Z"
 }
