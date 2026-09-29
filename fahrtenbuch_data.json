@@ -1443,6 +1443,32 @@
       "timeEnd": "18:51",
       "gesamtLiter": 10,
       "verbrauch": "58.8"
+    },
+    {
+      "id": 1790704448934,
+      "datum": "2026-09-29",
+      "zweck": "Einkaufen",
+      "von": "Jesolo",
+      "bis": "Shopping Center Donna di Piave",
+      "kmStart": 26789,
+      "timeStart": "19:53",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "Sonne",
+      "tankstopps": [
+        {
+          "time": "13:27",
+          "ort": "Esso",
+          "km": 26800,
+          "liter": 5,
+          "bemerkung": ""
+        }
+      ],
+      "kmEnd": 26871,
+      "strecke": 82,
+      "timeEnd": "18:09",
+      "gesamtLiter": 5,
+      "verbrauch": "6.1"
     }
   ],
   "settings": {
@@ -1473,5 +1499,5 @@
       }
     ]
   },
-  "lastSync": "2026-09-29T17:55:35.355Z"
+  "lastSync": "2026-09-29T17:56:14.260Z"
 }
