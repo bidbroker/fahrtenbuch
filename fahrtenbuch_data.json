@@ -1417,6 +1417,32 @@
       "timeEnd": "13:24",
       "gesamtLiter": 0,
       "verbrauch": null
+    },
+    {
+      "id": 1790704295663,
+      "datum": "2026-09-28",
+      "zweck": "Einkaufen",
+      "von": "Jesolo",
+      "bis": "Brico",
+      "kmStart": 26772,
+      "timeStart": "15:49",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "Sonne",
+      "tankstopps": [
+        {
+          "time": "17:01",
+          "ort": "Jesolo Esso",
+          "km": 26778,
+          "liter": 10,
+          "bemerkung": ""
+        }
+      ],
+      "kmEnd": 26789,
+      "strecke": 17,
+      "timeEnd": "18:51",
+      "gesamtLiter": 10,
+      "verbrauch": "58.8"
     }
   ],
   "settings": {
@@ -1447,5 +1473,5 @@
       }
     ]
   },
-  "lastSync": "2026-09-29T17:52:37.811Z"
+  "lastSync": "2026-09-29T17:53:09.672Z"
 }
