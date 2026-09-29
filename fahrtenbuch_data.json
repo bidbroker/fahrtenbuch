@@ -1463,7 +1463,15 @@
     "fahrer": "Christian Rapberger",
     "mitfahrer": "Andrea",
     "bemerkung": "Sonne",
-    "tankstopps": []
+    "tankstopps": [
+      {
+        "time": "13:27",
+        "ort": "Esso",
+        "km": 26800,
+        "liter": 5,
+        "bemerkung": ""
+      }
+    ]
   },
-  "lastSync": "2026-09-29T17:54:08.935Z"
+  "lastSync": "2026-09-29T17:55:35.355Z"
 }
