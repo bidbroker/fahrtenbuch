@@ -1478,26 +1478,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1790704448934,
-    "datum": "2026-09-29",
-    "zweck": "Einkaufen",
-    "von": "Jesolo",
-    "bis": "Shopping Center Donna di Piave",
-    "kmStart": 26789,
-    "timeStart": "19:53",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "Sonne",
-    "tankstopps": [
-      {
-        "time": "13:27",
-        "ort": "Esso",
-        "km": 26800,
-        "liter": 5,
-        "bemerkung": ""
-      }
-    ]
-  },
-  "lastSync": "2026-09-29T17:56:14.260Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-09-29T17:56:14.261Z"
 }
