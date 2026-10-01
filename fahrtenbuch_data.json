@@ -1469,6 +1469,24 @@
       "timeEnd": "18:09",
       "gesamtLiter": 5,
       "verbrauch": "6.1"
+    },
+    {
+      "id": 1790834420923,
+      "datum": "2026-09-30",
+      "zweck": "Rundkurs",
+      "von": "Jesolo Santa Fee",
+      "bis": "Donna di Piave",
+      "kmStart": 26871,
+      "timeStart": "16:07",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26922,
+      "strecke": 51,
+      "timeEnd": "17:54",
+      "gesamtLiter": 0,
+      "verbrauch": null
     }
   ],
   "settings": {
@@ -1478,18 +1496,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1790834420923,
-    "datum": "2026-09-30",
-    "zweck": "Rundkurs",
-    "von": "Jesolo Santa Fee",
-    "bis": "Donna di Piave",
-    "kmStart": 26871,
-    "timeStart": "16:07",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-10-01T06:00:20.924Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-10-01T06:00:59.855Z"
 }
