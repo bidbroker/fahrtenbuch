@@ -1487,6 +1487,24 @@
       "timeEnd": "17:54",
       "gesamtLiter": 0,
       "verbrauch": null
+    },
+    {
+      "id": 1790871003347,
+      "datum": "2026-10-01",
+      "zweck": "Weinkaufstour",
+      "von": "Jesolo",
+      "bis": "Sutto Wine",
+      "kmStart": 26992,
+      "timeStart": "15:13",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 27993,
+      "strecke": 1001,
+      "timeEnd": "18:28",
+      "gesamtLiter": 0,
+      "verbrauch": null
     }
   ],
   "settings": {
@@ -1509,5 +1527,5 @@
     "bemerkung": "",
     "tankstopps": []
   },
-  "lastSync": "2026-10-01T16:10:03.347Z"
+  "lastSync": "2026-10-01T20:07:08.559Z"
 }
