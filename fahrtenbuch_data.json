@@ -1496,6 +1496,18 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": null,
-  "lastSync": "2026-10-01T06:00:59.855Z"
+  "offeneFahrt": {
+    "id": 1790834420923,
+    "datum": "2026-09-30",
+    "zweck": "Rundkurs",
+    "von": "Jesolo Santa Fee",
+    "bis": "Donna di Piave",
+    "kmStart": 26871,
+    "timeStart": "16:07",
+    "fahrer": "Christian Rapberger",
+    "mitfahrer": "Andrea",
+    "bemerkung": "",
+    "tankstopps": []
+  },
+  "lastSync": "2026-10-01T06:00:59.854Z"
 }
