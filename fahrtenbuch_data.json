@@ -1514,18 +1514,6 @@
     "motor": "1192er Mexico D1 508739 / D1",
     "sub": "VW Buggy Rot / Historisch"
   },
-  "offeneFahrt": {
-    "id": 1790871003347,
-    "datum": "2026-10-01",
-    "zweck": "Weinkaufstour",
-    "von": "Jesolo",
-    "bis": "Sutto Wine",
-    "kmStart": 26992,
-    "timeStart": "15:13",
-    "fahrer": "Christian Rapberger",
-    "mitfahrer": "Andrea",
-    "bemerkung": "",
-    "tankstopps": []
-  },
-  "lastSync": "2026-10-01T20:07:08.559Z"
+  "offeneFahrt": null,
+  "lastSync": "2026-10-01T20:07:08.561Z"
 }
