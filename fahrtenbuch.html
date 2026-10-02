@@ -2492,27 +2492,48 @@ function msClearZweckBtns() {
 }
 
 function mGetLocation(targetId) {
-  if (!navigator.geolocation) return;
   const el = document.getElementById(targetId);
-  el.placeholder = 'Wird ermittelt …';
+  if (!navigator.geolocation) {
+    showToast('⚠ Standort wird vom Browser nicht unterstützt');
+    return;
+  }
+  el.placeholder = 'Standort wird ermittelt …';
+  showToast('📍 Standort wird ermittelt …');
+
   navigator.geolocation.getCurrentPosition(async pos => {
+    const { latitude, longitude } = pos.coords;
     try {
-      const { latitude, longitude } = pos.coords;
-      const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + latitude + '&lon=' + longitude + '&format=json';
-      const res = await fetch(url);
+      const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + latitude +
+                  '&lon=' + longitude + '&format=json&zoom=14&accept-language=de';
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
-      const ort = data.address.city || data.address.town || data.address.village ||
-                  data.address.suburb || data.address.county || '';
+      const a = data.address || {};
+      const ort = a.city || a.town || a.village || a.municipality ||
+                  a.suburb || a.county || a.state || '';
       if (ort) {
         el.value = ort;
-        el.placeholder = 'Startort';
         showToast('📍 ' + ort);
       } else {
-        el.placeholder = 'Startort';
+        // Fallback: GPS-Koordinaten anzeigen statt gar nichts
+        el.value = latitude.toFixed(4) + ', ' + longitude.toFixed(4);
+        showToast('📍 Ort nicht gefunden — Koordinaten eingetragen');
       }
-    } catch(e) { el.placeholder = 'Startort'; }
-  }, () => { el.placeholder = 'Startort'; },
-  { timeout: 5000, maximumAge: 60000 });
+    } catch(e) {
+      // Reverse-Geocoding fehlgeschlagen → wenigstens Koordinaten eintragen
+      el.value = latitude.toFixed(4) + ', ' + longitude.toFixed(4);
+      showToast('⚠ Ortsname nicht abrufbar — Koordinaten eingetragen');
+    } finally {
+      el.placeholder = 'Startort (📍 tippen)';
+    }
+  }, err => {
+    el.placeholder = 'Startort (📍 tippen)';
+    let msg = '⚠ Standort nicht verfügbar';
+    if (err.code === 1) msg = '⚠ Standort-Zugriff verweigert — in iOS-Einstellungen für Safari erlauben';
+    else if (err.code === 2) msg = '⚠ Position nicht ermittelbar (kein GPS/Netz)';
+    else if (err.code === 3) msg = '⚠ Standort-Abfrage dauert zu lange — nochmal versuchen';
+    showToast(msg);
+  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
 }
 
 // ── OCR KM-Scan ──
