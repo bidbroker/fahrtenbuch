@@ -2442,15 +2442,7 @@ function mFahrtAbbrechen() {
   saveOffen();
   renderNeuPage();
   mRenderHome();
-  showToast('Fahrt wurde abgebrochen.');
-}
-
-  if (!confirm('Laufende Fahrt wirklich abbrechen?')) return;
-  offeneFahrt = null;
-  saveOffen();
-  renderNeuPage();
-  mRenderHome();
-  mRenderSchnell();
+  try { mRenderSchnell(); } catch(e) {}
   showToast('Fahrt wurde abgebrochen.');
 }
 
@@ -2462,14 +2454,14 @@ function mRenderSchnell() {
   const noTrip = document.getElementById('ms-no-trip');
   const openTrip = document.getElementById('ms-open-trip');
   if (!noTrip || !openTrip) return; // DOM noch nicht bereit
+
+  if (offeneFahrt) {
     noTrip.style.display = 'none';
     openTrip.style.display = 'block';
     document.getElementById('ms-tc-route').textContent = offeneFahrt.von + ' → ' + offeneFahrt.bis;
     document.getElementById('ms-tc-info').textContent =
       (offeneFahrt.zweck || '') + ' · ab ' + (offeneFahrt.timeStart || '—') + ' Uhr · ' +
       (offeneFahrt.kmStart || 0).toLocaleString('de-AT') + ' km';
-    // Ankunftszeit vorbelegen
-    const now = new Date();
     document.getElementById('ms-km-end').value = '';
   } else {
     noTrip.style.display = 'block';
