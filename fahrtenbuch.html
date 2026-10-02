@@ -2572,12 +2572,11 @@ async function mProcessScan(event) {
     });
 
     const matches = text.replace(/\D/g, ' ').trim().split(/\s+/).filter(Boolean);
-    // Kandidaten: 4–7 Ziffern, längste zuerst
+    // Kandidaten als STRINGS behalten (führende Nullen wichtig für Tacho-Endstellen),
+    // 3–7 Ziffern (3 = die sicher sichtbaren Tacho-Endstellen), längste zuerst.
     const kandidaten = matches
-      .filter(m => m.length >= 4 && m.length <= 7)
-      .map(m => parseInt(m, 10))
-      .filter(n => !isNaN(n))
-      .sort((a,b) => String(b).length - String(a).length);
+      .filter(m => m.length >= 3 && m.length <= 7)
+      .sort((a,b) => b.length - a.length);
 
     const letzter = mLetzterKmStand();
     const result = mPlausibelsterKm(kandidaten, letzter);
@@ -2591,8 +2590,8 @@ async function mProcessScan(event) {
         showToast('⚠ ' + result.wert.toLocaleString('de-AT') + ' km — bitte prüfen! ' + result.hinweis);
       }
     } else if (kandidaten.length) {
-      el.value = kandidaten[0];
-      showToast('⚠ ' + kandidaten[0].toLocaleString('de-AT') + ' km unsicher — bitte prüfen');
+      el.value = parseInt(kandidaten[0], 10);
+      showToast('⚠ ' + parseInt(kandidaten[0], 10).toLocaleString('de-AT') + ' km unsicher — bitte prüfen');
     } else {
       showToast('⚠ Nicht erkannt — bitte manuell eingeben');
     }
@@ -2616,6 +2615,7 @@ function mLetzterKmStand() {
 
 // Wählt aus OCR-Kandidaten den plausibelsten Wert; versucht bei Bedarf eine
 // einzelne vom Zeiger verdeckte/falsch erkannte Ziffer anhand des letzten Standes zu korrigieren.
+// Tacho-Besonderheit: 5-stellig, Tausenderstelle (Position 2 v.l.) wird IMMER vom Zeiger verdeckt.
 function mPlausibelsterKm(kandidaten, letzter) {
   const MIN_ZUWACHS = 1;   // eine Tour hat mindestens 1 km
   const MAX_ZUWACHS = 800; // km pro Tour (großzügig)
@@ -2623,18 +2623,34 @@ function mPlausibelsterKm(kandidaten, letzter) {
 
   if (!kandidaten.length) return { wert: null };
 
+  // Kandidaten als Strings (führende Nullen erhalten) + numerische Variante
+  const strs = kandidaten.map(String);
+  const nums = strs.map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+
   // 1) Direkt plausibler Kandidat (>= letzter + sinnvoller Zuwachs)
-  const direkt = kandidaten.filter(plausibel).sort((a,b) => a-b);
+  const direkt = nums.filter(plausibel).sort((a,b) => a-b);
   if (direkt.length) return { wert: direkt[0], sicher: true };
 
-  // Kein Referenzwert → besten Kandidaten ohne Korrektur
-  if (letzter <= 0) return { wert: kandidaten[0], sicher: false, hinweis: '' };
+  // Kein Referenzwert → größten Kandidaten ohne Korrektur
+  if (letzter <= 0) return { wert: Math.max(...nums), sicher: false, hinweis: '' };
 
   const ziel = String(letzter);
+
+  // 0) TACHO-REKONSTRUKTION (höchste Priorität, da festes Verdeckungsmuster)
+  //    5-stelliger Tacho: Position 2 (Tausender) ist immer vom Zeiger verdeckt.
+  //    Nutze die sicher sichtbaren Stellen und rekonstruiere die Tausenderstelle.
+  if (ziel.length === 5) {
+    const tachoKorr = mTachoRekonstruktion(strs, ziel, plausibel);
+    if (tachoKorr.length) {
+      // Kleinster Zuwachs = wahrscheinlichste Tour (nicht kleinster Absolutwert)
+      tachoKorr.sort((a,b) => (a.wert - letzter) - (b.wert - letzter));
+      return { wert: tachoKorr[0].wert, sicher: false, hinweis: tachoKorr[0].hinweis + ' — bitte prüfen' };
+    }
+  }
+
   const korrekturen = []; // {wert, hinweis}
 
-  for (const k of kandidaten) {
-    const s = String(k);
+  for (const s of strs) {
 
     // 2a) Gleiche Stellenzahl, genau EINE abweichende Ziffer (Zeiger falsch erkannt)
     if (s.length === ziel.length) {
@@ -2667,9 +2683,51 @@ function mPlausibelsterKm(kandidaten, letzter) {
   }
 
   // 3) Nichts korrigierbar → bester Kandidat >= letzter, sonst größter
-  const ueber = kandidaten.filter(k => k >= letzter).sort((a,b) => a-b)[0];
+  const ueber = nums.filter(k => k >= letzter).sort((a,b) => a-b)[0];
   if (ueber != null) return { wert: ueber, sicher: false, hinweis: '(Zuwachs ungewöhnlich)' };
-  return { wert: Math.max(...kandidaten), sicher: false, hinweis: '(kleiner als letzter Stand!)' };
+  return { wert: Math.max(...nums), sicher: false, hinweis: '(kleiner als letzter Stand!)' };
+}
+
+// Rekonstruiert einen 5-stelligen Tachostand bei verdeckter Tausenderstelle (Position 2 v.l.).
+// Positionen (0-indiziert): [0]=Zehntausender(~sichtbar) [1]=Tausender(VERDECKT)
+//                           [2]=Hunderter [3]=Zehner [4]=Einer (alle sichtbar).
+// Erwartet OCR-Kandidaten die entweder 4-stellig (Tausender fehlt) oder
+// 5-stellig mit falscher Tausenderstelle sind. Gibt plausible Kandidaten zurück.
+function mTachoRekonstruktion(kandidaten, ziel, plausibel) {
+  const out = [];
+  const zt = ziel[0]; // Zehntausender aus letztem Stand
+
+  for (const k of kandidaten) {
+    const s = String(k);
+
+    // Fall A: 4 Ziffern = Zehntausender + 3 sichtbare (Tausender vom Zeiger verschluckt)
+    //   → Tausenderstelle (0–9) einsetzen zwischen Stelle 1 und 2
+    if (s.length === 4) {
+      // Zehntausender ok? (OCR-Stelle 0 sollte zum letzten Stand passen, da ~80% sichtbar)
+      for (let d = 0; d <= 9; d++) {
+        const v = parseInt(s[0] + d + s.slice(1), 10);
+        if (plausibel(v)) out.push({ wert: v, hinweis: 'Tausenderstelle ergänzt' });
+      }
+    }
+
+    // Fall B: 3 Ziffern = nur die 3 sicher sichtbaren Endstellen erkannt
+    //   → Zehntausender aus letztem Stand, Tausender (0–9) probieren
+    if (s.length === 3) {
+      for (let d = 0; d <= 9; d++) {
+        const v = parseInt(zt + String(d) + s, 10);
+        if (plausibel(v)) out.push({ wert: v, hinweis: 'Tausender + Zehntausender ergänzt' });
+      }
+    }
+
+    // Fall C: 5 Ziffern erkannt, aber unplausibel → nur Tausenderstelle (Pos.1) neu bestimmen
+    if (s.length === 5) {
+      for (let d = 0; d <= 9; d++) {
+        const v = parseInt(s[0] + d + s.slice(2), 10);
+        if (plausibel(v)) out.push({ wert: v, hinweis: 'Tausenderstelle korrigiert' });
+      }
+    }
+  }
+  return out;
 }
 
 function mSchnellAbfahrt() {
