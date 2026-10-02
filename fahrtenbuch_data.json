@@ -1097,6 +1097,24 @@
       "verbrauch": null
     },
     {
+      "id": 1782200000000,
+      "datum": "2026-06-22",
+      "zweck": "Baumärkte",
+      "von": "Gablitz",
+      "bis": "Wien",
+      "kmStart": 26468,
+      "timeStart": "12:32",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 26488,
+      "strecke": 20,
+      "timeEnd": "15:33",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    },
+    {
       "id": 1782302778077,
       "datum": "2026-06-23",
       "zweck": "Deko für Appartement kaufen",
