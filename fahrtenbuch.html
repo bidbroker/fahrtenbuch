@@ -2201,10 +2201,10 @@ function mNav(screen) {
   const navEl = document.getElementById('m-nav-' + screen);
   if (screenEl) screenEl.classList.add('active');
   if (navEl) navEl.classList.add('active');
-  if (screen === 'home') mRenderHome();
-  if (screen === 'buch') mRenderBuch();
-  if (screen === 'settings') mLoadSettings();
-  if (screen === 'schnell') mRenderSchnell();
+  try { if (screen === 'home') mRenderHome(); } catch(e) { console.error('mRenderHome:', e); }
+  try { if (screen === 'buch') mRenderBuch(); } catch(e) { console.error('mRenderBuch:', e); }
+  try { if (screen === 'settings') mLoadSettings(); } catch(e) { console.error('mLoadSettings:', e); }
+  try { if (screen === 'schnell') mRenderSchnell(); } catch(e) { console.error('mRenderSchnell:', e); }
 }
 
 // ── HOME ──
@@ -2656,6 +2656,7 @@ function mRenderBuch() {
   const tabsEl = document.getElementById('m-year-tabs');
   const statsEl = document.getElementById('m-stats');
   const entriesEl = document.getElementById('m-entries');
+  if (!tabsEl || !statsEl || !entriesEl) return;
 
   tabsEl.innerHTML = years.map(y =>
     '<button class="m-ytab ' + (String(y) === String(selectedYear) ? 'active' : '') +
@@ -2690,7 +2691,7 @@ function mRenderBuch() {
       '</div>' +
       '<div class="me-route">' + f.von + ' → ' + f.bis + '</div>' +
       '<div class="me-stats">' +
-        '<span class="me-stat"><strong>' + f.strecke.toLocaleString('de-AT') + ' km</strong></span>' +
+        '<span class="me-stat"><strong>' + (f.strecke||0).toLocaleString('de-AT') + ' km</strong></span>' +
         (f.timeStart ? '<span class="me-stat">' + f.timeStart + ' – ' + (f.timeEnd||'?') + ' Uhr</span>' : '') +
         (tanks ? '<span class="me-stat">' + tanks + '</span>' : '') +
       '</div>' +
