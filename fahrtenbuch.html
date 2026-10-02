@@ -3206,6 +3206,25 @@ setTimeout(function() {
   try { initGitHubSync(); } catch(e) { console.error('GitHub init failed:', e); }
 }, 100);
 
+// Fallback: lade JSON direkt aus öffentlichem Repo wenn localStorage leer
+setTimeout(async function() {
+  if (fahrten.length > 0) return; // localStorage hat Daten → nichts tun
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/bidbroker/fahrtenbuch/main/fahrtenbuch_data.json');
+    if (!res.ok) return;
+    const decoded = await res.json();
+    if (decoded.fahrten && decoded.fahrten.length > 0) {
+      fahrten = decoded.fahrten;
+      if (decoded.settings) settings = decoded.settings;
+      saveFahrtenLocal();
+      ls.set('fahrtenbuch_settings', JSON.stringify(settings));
+      applySettings();
+      mRenderSchnell();
+      mRenderHome();
+    }
+  } catch(e) { /* ignorieren */ }
+}, 300);
+
 
 // ══════════════════════════════════════════════════════
 //  DRUCKEN — strukturierte Ausgabe wie TXT-Export
