@@ -2472,8 +2472,9 @@ function mRenderSchnell() {
       });
       if (sorted[0].kmEnd) document.getElementById('ms-km-start').value = sorted[0].kmEnd;
     }
-    // Startort per Geolocation automatisch befüllen
-    mGetLocation('ms-von');
+    // Startort nur einmalig per Geolocation befüllen wenn noch leer
+    const vonEl = document.getElementById('ms-von');
+    if (!vonEl.value) mGetLocation('ms-von');
   }
 }
 
@@ -2488,7 +2489,9 @@ function msClearZweckBtns() {
 }
 
 function mGetLocation(targetId) {
-  if (!navigator.geolocation) { showToast('Geolocation nicht verfügbar'); return; }
+  if (!navigator.geolocation) return;
+  const el = document.getElementById(targetId);
+  el.placeholder = 'Wird ermittelt …';
   navigator.geolocation.getCurrentPosition(async pos => {
     try {
       const { latitude, longitude } = pos.coords;
@@ -2498,11 +2501,15 @@ function mGetLocation(targetId) {
       const ort = data.address.city || data.address.town || data.address.village ||
                   data.address.suburb || data.address.county || '';
       if (ort) {
-        document.getElementById(targetId).value = ort;
+        el.value = ort;
+        el.placeholder = 'Startort';
         showToast('📍 ' + ort);
+      } else {
+        el.placeholder = 'Startort';
       }
-    } catch(e) { /* kein Fehler anzeigen — Feld bleibt leer */ }
-  }, () => { /* Geolocation verweigert — kein Toast */ });
+    } catch(e) { el.placeholder = 'Startort'; }
+  }, () => { el.placeholder = 'Startort'; },
+  { timeout: 5000, maximumAge: 60000 });
 }
 
 // ── OCR KM-Scan ──
@@ -3219,11 +3226,13 @@ setTimeout(async function() {
       saveFahrtenLocal();
       ls.set('fahrtenbuch_settings', JSON.stringify(settings));
       applySettings();
-      mRenderSchnell();
+      // KM-Feld nur aktualisieren wenn noch leer/0
+      const kmEl = document.getElementById('ms-km-start');
+      if (kmEl && (!kmEl.value || kmEl.value === '0')) mRenderSchnell();
       mRenderHome();
     }
   } catch(e) { /* ignorieren */ }
-}, 300);
+}, 800);
 
 
 // ══════════════════════════════════════════════════════
