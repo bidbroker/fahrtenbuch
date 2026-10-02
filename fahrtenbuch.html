@@ -2474,7 +2474,7 @@ function mRenderSchnell() {
     }
     // Startort nur einmalig per Geolocation befüllen wenn noch leer
     const vonEl = document.getElementById('ms-von');
-    if (!vonEl.value) mGetLocation('ms-von');
+    if (!vonEl.value) vonEl.placeholder = 'Startort (📍 tippen)';
   }
 }
 
@@ -2525,6 +2525,10 @@ function mScanKm(targetId) {
 async function mProcessScan(event) {
   const file = event.target.files[0];
   if (!file) return;
+  if (typeof Tesseract === 'undefined') {
+    showToast('⚠ OCR-Bibliothek lädt noch — bitte kurz warten und nochmal versuchen');
+    return;
+  }
   showToast('🔍 KM-Stand wird erkannt …');
 
   try {
