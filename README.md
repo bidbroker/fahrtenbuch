@@ -19,14 +19,35 @@ Single-Page-App — eine einzige HTML-Datei, keine Installation, kein Server nö
 
 ## Features
 
+- **⚡ Schnell-Tab (Standard-Startseite mobil):** Ausfahrt mit minimalen Eingaben starten
+  - KM-Start automatisch mit letztem Stand vorbelegt
+  - Startort per Geolocation (📍) → Reverse-Geocoding (OpenStreetMap Nominatim)
+  - Zweck per Schnellwahl (Einkaufen / Sightseeing / Ausfahrt) oder Freitext
+  - Nur der Zielort muss getippt werden
+  - Ankunft: KM-Ende tippen → fertig
 - Fahrten erfassen (Start, Ziel, km, Uhrzeit, Fahrer, Mitfahrer, Bemerkung)
 - Tankstopps während einer Fahrt eintragen (Ort, km, Liter)
 - Automatische Verbrauchsberechnung (L/100km)
 - Fahrten bearbeiten und löschen
-- Jahresansicht mit Filterung
+- Jahresansicht mit Filterung (neueste Fahrt oben)
 - Drucken / PDF-Export
 - Textexport (komplettes Fahrtenbuch als .txt)
 - **GitHub-Sync:** Daten werden automatisch in diesem Repository gespeichert → geräteübergreifend verfügbar
+- **Offline-fähig:** Fahrtendaten sind in die HTML eingebettet → App startet auch ohne Netz, Token oder localStorage
+
+---
+
+## Nutzung am iPhone
+
+Einfachster Weg — direkt über GitHub Pages öffnen:
+
+```
+https://bidbroker.github.io/fahrtenbuch/fahrtenbuch.html
+```
+
+In Safari → Teilen → „Zum Home-Bildschirm" → App-Icon am Homescreen.
+
+> **Standort (📍):** iOS-Einstellungen → Datenschutz → Ortungsdienste → Safari-Websites → „Beim Verwenden". HTTPS (GitHub Pages) ist Voraussetzung — bei lokaler `file://`-Datei funktioniert Geolocation/Reverse-Geocoding nicht.
 
 ---
 
@@ -79,6 +100,35 @@ Single-Page-App — eine einzige HTML-Datei, keine Installation, kein Server nö
 
 ## Bekannte Probleme & Fixes
 
+### KM-Scan (OCR) verworfen (2026-10-02)
+
+**Idee:** Tacho fotografieren → KM-Stand automatisch per OCR (Tesseract.js) übernehmen.
+
+**Ergebnis:** Funktioniert mit diesem Fahrzeug **nicht** zuverlässig und wurde wieder entfernt.
+
+**Warum gescheitert:**
+- Der VDO-Walzenzähler des Oldtimers hat beige Ziffern auf hellgrauem Grund (minimaler Kontrast)
+- Die Tausenderstelle wird vom Tachozeiger gekreuzt/verdeckt
+- Mechanische Walzen-Ziffern haben einen eigenen Font (keine gedruckten Zahlen)
+- Das Gesamtbild enthält ~170 Zahlen von der Tacho-Skala (20–150) → OCR ertrinkt im Rauschen
+
+**Getestet (mit echtem Foto, lokal verifiziert):**
+- Ganzes Bild → unbrauchbar (170+ Zahlen)
+- Zuschnitt aufs Zählwerk + Hochskalierung + Kontrast + PSM 8 → bestes Ergebnis `24668` statt echtem `27006` (2 von 5 Ziffern falsch)
+- Plausibilitätsprüfung gegen letzten Stand + Tausenderstellen-Rekonstruktion halfen nicht genug
+
+**Entscheidung:** KM-Stand wird **manuell getippt** (mit Vorbelegung des letzten Standes).
+Bei diesem Tacho ist Tippen schneller und fehlerfrei. Nicht erneut mit Tesseract versuchen —
+eine Verbesserung bräuchte Apple Live Text / Vision, was nur in einer nativen iOS-App geht.
+
+### App hing komplett / Tabs reagierten nicht (2026-10-02)
+
+**Ursache:** Verwaister Code-Block + zerbrochenes `if/else` in `mRenderSchnell()` erzeugten einen
+JavaScript-**Syntaxfehler**. Ein einziger Syntaxfehler legt das gesamte Script still → kein Tab reagierte.
+
+**Lektion:** Bei „nichts funktioniert mehr" immer zuerst Syntax prüfen, nicht an Einzelsymptomen arbeiten.
+Verifikation per `node --check` (JS aus HTML extrahieren) + jsdom-Ladetest (alle Tabs, 0 Fehler).
+
 ### Duplikate in der Datenbank (behoben 2026-07-20)
 
 **Ursache:** Beim Bearbeiten eines Eintrags und gleichzeitigem oder wiederholtem GitHub-Sync
@@ -128,12 +178,12 @@ git push
 
 ---
 
-## Fahrtenstatistik (Stand 2026-07-20)
+## Fahrtenstatistik (Stand 2026-10-02)
 
 | Jahr | Fahrten |
 |---|---|
 | 2023 | 9 |
 | 2024 | 30 |
 | 2025 | 19 |
-| 2026 | 14 |
-| **Gesamt** | **72** |
+| 2026 | 25 |
+| **Gesamt** | **83** |
