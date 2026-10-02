@@ -1525,6 +1525,25 @@
       "verbrauch": null
     }
   ],
+    {
+      "id": 1790957520000,
+      "datum": "2026-10-02",
+      "zweck": "Venedig Vaporetto",
+      "von": "Jesolo",
+      "bis": "Venedig",
+      "kmStart": 26960,
+      "timeStart": "10:32",
+      "fahrer": "Christian Rapberger",
+      "mitfahrer": "Andrea",
+      "bemerkung": "",
+      "tankstopps": [],
+      "kmEnd": 27006,
+      "strecke": 46,
+      "timeEnd": "18:02",
+      "gesamtLiter": 0,
+      "verbrauch": null
+    }
+  ],
   "settings": {
     "title": "Ledl Europa 2001",
     "kz": "WU-327AF",
