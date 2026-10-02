@@ -1088,12 +1088,9 @@
     font-size: 12px; color: rgba(200,151,58,0.5);
     letter-spacing: 1px; text-transform: uppercase;
   }
-  .ms-ocr-hint {
-    font-size: 12px; color: rgba(200,151,58,0.45);
-    font-style: italic; text-align: center; margin-top: 8px;
-  }
 
   /* ── SETTINGS MOBILE ── */
+  .m-settings-section {
     background: #16141a;
     border: 1px solid rgba(200,151,58,0.15);
     border-radius: 14px;
@@ -1131,7 +1128,6 @@
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
 </head>
 <body>
 
@@ -2536,311 +2532,6 @@ function mGetLocation(targetId) {
   }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
 }
 
-// ── OCR KM-Scan ──
-let kmScanTargetId = null;
-
-function mScanKm(targetId) {
-  kmScanTargetId = targetId;
-  const inp = document.getElementById('km-scan-input');
-  inp.value = '';
-  inp.click();
-}
-
-// Nach Fotoauswahl: Zuschnitt-Overlay öffnen, damit nur das Zählwerk an die OCR geht.
-async function mProcessScan(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  if (typeof Tesseract === 'undefined') {
-    showToast('⚠ OCR-Bibliothek lädt noch — bitte kurz warten und nochmal versuchen');
-    return;
-  }
-  try {
-    const bmp = await createImageBitmap(file);
-    mCropOpen(bmp);
-  } catch(e) {
-    showToast('⚠ Bild konnte nicht geladen werden');
-  }
-}
-
-// ── Zuschnitt-Overlay ──
-let mCropState = null;
-
-function mCropOpen(bmp) {
-  const overlay = document.getElementById('km-crop-overlay');
-  const stage = document.getElementById('km-crop-stage');
-  const imgEl = document.getElementById('km-crop-img');
-  const box = document.getElementById('km-crop-box');
-
-  overlay.style.display = 'block';
-  const stageW = stage.clientWidth, stageH = stage.clientHeight;
-  // Bild einpassen (contain)
-  const fit = Math.min(stageW / bmp.width, stageH / bmp.height);
-  const dispW = bmp.width * fit, dispH = bmp.height * fit;
-  const offX = (stageW - dispW) / 2, offY = (stageH - dispH) / 2;
-
-  // Als Canvas → DataURL (createImageBitmap-Quelle kann nicht direkt in <img>)
-  const c = document.createElement('canvas');
-  c.width = bmp.width; c.height = bmp.height;
-  c.getContext('2d').drawImage(bmp, 0, 0);
-  imgEl.src = c.toDataURL('image/jpeg', 0.9);
-  imgEl.style.left = offX + 'px';
-  imgEl.style.top = offY + 'px';
-  imgEl.style.width = dispW + 'px';
-  imgEl.style.height = dispH + 'px';
-
-  // Startrahmen: horizontaler Streifen in der Bildmitte (typische Zählwerk-Lage)
-  const bw = dispW * 0.6, bh = dispH * 0.12;
-  const bx = offX + (dispW - bw) / 2, by = offY + (dispH - bh) / 2;
-  box.style.left = bx + 'px'; box.style.top = by + 'px';
-  box.style.width = bw + 'px'; box.style.height = bh + 'px';
-
-  mCropState = { bmp, offX, offY, dispW, dispH, fit };
-  mCropBindDrag();
-}
-
-function mCropBindDrag() {
-  const box = document.getElementById('km-crop-box');
-  const handle = box.querySelector('.km-crop-handle');
-  let mode = null, sx = 0, sy = 0, start = {};
-
-  const getXY = e => {
-    const t = e.touches ? e.touches[0] : e;
-    return { x: t.clientX, y: t.clientY };
-  };
-  const begin = m => e => {
-    e.preventDefault();
-    mode = m;
-    const p = getXY(e);
-    sx = p.x; sy = p.y;
-    start = { left: parseFloat(box.style.left), top: parseFloat(box.style.top),
-              w: parseFloat(box.style.width), h: parseFloat(box.style.height) };
-    document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, {passive:false});
-    document.addEventListener('mouseup', end); document.addEventListener('touchend', end);
-  };
-  const move = e => {
-    if (!mode) return;
-    e.preventDefault();
-    const p = getXY(e);
-    const dx = p.x - sx, dy = p.y - sy;
-    if (mode === 'move') {
-      box.style.left = (start.left + dx) + 'px';
-      box.style.top = (start.top + dy) + 'px';
-    } else { // resize se-corner
-      box.style.width = Math.max(40, start.w + dx) + 'px';
-      box.style.height = Math.max(30, start.h + dy) + 'px';
-    }
-  };
-  const end = () => {
-    mode = null;
-    document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move);
-    document.removeEventListener('mouseup', end); document.removeEventListener('touchend', end);
-  };
-
-  box.onmousedown = begin('move'); box.ontouchstart = begin('move');
-  handle.onmousedown = e => { e.stopPropagation(); begin('resize')(e); };
-  handle.ontouchstart = e => { e.stopPropagation(); begin('resize')(e); };
-}
-
-function mCropCancel() {
-  document.getElementById('km-crop-overlay').style.display = 'none';
-  mCropState = null;
-}
-
-async function mCropConfirm() {
-  if (!mCropState) return;
-  const { bmp, offX, offY, fit } = mCropState;
-  const box = document.getElementById('km-crop-box');
-  // Rahmen (Bildschirm-Koordinaten) → Originalbild-Koordinaten
-  const bx = (parseFloat(box.style.left) - offX) / fit;
-  const by = (parseFloat(box.style.top) - offY) / fit;
-  const bw = parseFloat(box.style.width) / fit;
-  const bh = parseFloat(box.style.height) / fit;
-
-  const cx = Math.max(0, Math.round(bx)), cy = Math.max(0, Math.round(by));
-  const cw = Math.min(bmp.width - cx, Math.round(bw));
-  const ch = Math.min(bmp.height - cy, Math.round(bh));
-
-  document.getElementById('km-crop-overlay').style.display = 'none';
-  showToast('🔍 KM-Stand wird erkannt …');
-
-  // Ausschnitt hochskalieren + Graustufen + Kontrast
-  const upscale = Math.max(1, Math.min(4, 900 / cw));
-  const outW = Math.round(cw * upscale), outH = Math.round(ch * upscale);
-  const canvas = document.createElement('canvas');
-  canvas.width = outW; canvas.height = outH;
-  const ctx = canvas.getContext('2d');
-  ctx.filter = 'grayscale(1) contrast(2.4) brightness(1.1)';
-  ctx.drawImage(bmp, cx, cy, cw, ch, 0, 0, outW, outH);
-
-  mCropState = null;
-  await mRunOcr(canvas);
-}
-
-// Eigentliche OCR auf einem vorbereiteten Canvas-Ausschnitt
-async function mRunOcr(canvas) {
-  try {
-    const { data: { text } } = await Tesseract.recognize(canvas, 'eng', {
-      tessedit_char_whitelist: '0123456789',
-      tessedit_pageseg_mode: '8' // ganzer Ausschnitt als ein "Wort" — bester Modus für Zählwerk
-    });
-
-    const matches = text.replace(/\D/g, ' ').trim().split(/\s+/).filter(Boolean);
-    const kandidaten = matches
-      .filter(m => m.length >= 3 && m.length <= 7)
-      .sort((a,b) => b.length - a.length);
-
-    const letzter = mLetzterKmStand();
-    const result = mPlausibelsterKm(kandidaten, letzter);
-
-    const el = document.getElementById(kmScanTargetId);
-    if (result.wert != null) {
-      el.value = result.wert;
-      if (result.sicher) {
-        showToast('✓ ' + result.wert.toLocaleString('de-AT') + ' km erkannt');
-      } else {
-        showToast('⚠ ' + result.wert.toLocaleString('de-AT') + ' km — bitte prüfen! ' + result.hinweis);
-      }
-    } else if (kandidaten.length) {
-      el.value = parseInt(kandidaten[0], 10);
-      showToast('⚠ ' + parseInt(kandidaten[0], 10).toLocaleString('de-AT') + ' km unsicher — bitte prüfen');
-    } else {
-      showToast('⚠ Nicht erkannt — bitte manuell eingeben');
-    }
-  } catch(e) {
-    showToast('⚠ Scan fehlgeschlagen — bitte manuell eingeben');
-  }
-}
-
-// Letzter bekannter KM-Stand als Referenz für die Plausibilitätsprüfung
-function mLetzterKmStand() {
-  // Bei Ankunft: Startkilometer des laufenden Trips
-  if (kmScanTargetId === 'ms-km-end' && offeneFahrt && offeneFahrt.kmStart) {
-    return offeneFahrt.kmStart;
-  }
-  // Sonst: höchster kmEnd aller Fahrten
-  if (fahrten && fahrten.length) {
-    return fahrten.reduce((max, f) => Math.max(max, f.kmEnd || f.kmStart || 0), 0);
-  }
-  return 0;
-}
-
-// Wählt aus OCR-Kandidaten den plausibelsten Wert; versucht bei Bedarf eine
-// einzelne vom Zeiger verdeckte/falsch erkannte Ziffer anhand des letzten Standes zu korrigieren.
-// Tacho-Besonderheit: 5-stellig, Tausenderstelle (Position 2 v.l.) wird IMMER vom Zeiger verdeckt.
-function mPlausibelsterKm(kandidaten, letzter) {
-  const MIN_ZUWACHS = 1;   // eine Tour hat mindestens 1 km
-  const MAX_ZUWACHS = 800; // km pro Tour (großzügig)
-  const plausibel = k => letzter > 0 && (k - letzter) >= MIN_ZUWACHS && (k - letzter) <= MAX_ZUWACHS;
-
-  if (!kandidaten.length) return { wert: null };
-
-  // Kandidaten als Strings (führende Nullen erhalten) + numerische Variante
-  const strs = kandidaten.map(String);
-  const nums = strs.map(s => parseInt(s, 10)).filter(n => !isNaN(n));
-
-  // 1) Direkt plausibler Kandidat (>= letzter + sinnvoller Zuwachs)
-  const direkt = nums.filter(plausibel).sort((a,b) => a-b);
-  if (direkt.length) return { wert: direkt[0], sicher: true };
-
-  // Kein Referenzwert → größten Kandidaten ohne Korrektur
-  if (letzter <= 0) return { wert: Math.max(...nums), sicher: false, hinweis: '' };
-
-  const ziel = String(letzter);
-
-  // 0) TACHO-REKONSTRUKTION (höchste Priorität, da festes Verdeckungsmuster)
-  //    5-stelliger Tacho: Position 2 (Tausender) ist immer vom Zeiger verdeckt.
-  //    Nutze die sicher sichtbaren Stellen und rekonstruiere die Tausenderstelle.
-  if (ziel.length === 5) {
-    const tachoKorr = mTachoRekonstruktion(strs, ziel, plausibel);
-    if (tachoKorr.length) {
-      // Kleinster Zuwachs = wahrscheinlichste Tour (nicht kleinster Absolutwert)
-      tachoKorr.sort((a,b) => (a.wert - letzter) - (b.wert - letzter));
-      return { wert: tachoKorr[0].wert, sicher: false, hinweis: tachoKorr[0].hinweis + ' — bitte prüfen' };
-    }
-  }
-
-  const korrekturen = []; // {wert, hinweis}
-
-  for (const s of strs) {
-
-    // 2a) Gleiche Stellenzahl, genau EINE abweichende Ziffer (Zeiger falsch erkannt)
-    if (s.length === ziel.length) {
-      const abw = [];
-      for (let i = 0; i < s.length; i++) if (s[i] !== ziel[i]) abw.push(i);
-      if (abw.length === 1) {
-        const i = abw[0];
-        for (let d = 0; d <= 9; d++) {
-          const v = parseInt(s.slice(0, i) + d + s.slice(i + 1), 10);
-          if (plausibel(v)) korrekturen.push({ wert: v, hinweis: '(1 Ziffer korrigiert)' });
-        }
-      }
-    }
-
-    // 2b) EINE Stelle zu wenig (Zeiger hat Ziffer ganz verschluckt) → an jeder Position einfügen
-    if (s.length === ziel.length - 1) {
-      for (let i = 0; i <= s.length; i++) {
-        for (let d = 0; d <= 9; d++) {
-          const v = parseInt(s.slice(0, i) + d + s.slice(i), 10);
-          if (plausibel(v)) korrekturen.push({ wert: v, hinweis: '(fehlende Ziffer ergänzt)' });
-        }
-      }
-    }
-  }
-
-  if (korrekturen.length) {
-    // Plausibelster = kleinster sinnvoller Zuwachs über MIN
-    korrekturen.sort((a,b) => a.wert - b.wert);
-    return { wert: korrekturen[0].wert, sicher: false, hinweis: korrekturen[0].hinweis + ' — bitte prüfen' };
-  }
-
-  // 3) Nichts korrigierbar → bester Kandidat >= letzter, sonst größter
-  const ueber = nums.filter(k => k >= letzter).sort((a,b) => a-b)[0];
-  if (ueber != null) return { wert: ueber, sicher: false, hinweis: '(Zuwachs ungewöhnlich)' };
-  return { wert: Math.max(...nums), sicher: false, hinweis: '(kleiner als letzter Stand!)' };
-}
-
-// Rekonstruiert einen 5-stelligen Tachostand bei verdeckter Tausenderstelle (Position 2 v.l.).
-// Positionen (0-indiziert): [0]=Zehntausender(~sichtbar) [1]=Tausender(VERDECKT)
-//                           [2]=Hunderter [3]=Zehner [4]=Einer (alle sichtbar).
-// Erwartet OCR-Kandidaten die entweder 4-stellig (Tausender fehlt) oder
-// 5-stellig mit falscher Tausenderstelle sind. Gibt plausible Kandidaten zurück.
-function mTachoRekonstruktion(kandidaten, ziel, plausibel) {
-  const out = [];
-  const zt = ziel[0]; // Zehntausender aus letztem Stand
-
-  for (const k of kandidaten) {
-    const s = String(k);
-
-    // Fall A: 4 Ziffern = Zehntausender + 3 sichtbare (Tausender vom Zeiger verschluckt)
-    //   → Tausenderstelle (0–9) einsetzen zwischen Stelle 1 und 2
-    if (s.length === 4) {
-      // Zehntausender ok? (OCR-Stelle 0 sollte zum letzten Stand passen, da ~80% sichtbar)
-      for (let d = 0; d <= 9; d++) {
-        const v = parseInt(s[0] + d + s.slice(1), 10);
-        if (plausibel(v)) out.push({ wert: v, hinweis: 'Tausenderstelle ergänzt' });
-      }
-    }
-
-    // Fall B: 3 Ziffern = nur die 3 sicher sichtbaren Endstellen erkannt
-    //   → Zehntausender aus letztem Stand, Tausender (0–9) probieren
-    if (s.length === 3) {
-      for (let d = 0; d <= 9; d++) {
-        const v = parseInt(zt + String(d) + s, 10);
-        if (plausibel(v)) out.push({ wert: v, hinweis: 'Tausender + Zehntausender ergänzt' });
-      }
-    }
-
-    // Fall C: 5 Ziffern erkannt, aber unplausibel → nur Tausenderstelle (Pos.1) neu bestimmen
-    if (s.length === 5) {
-      for (let d = 0; d <= 9; d++) {
-        const v = parseInt(s[0] + d + s.slice(2), 10);
-        if (plausibel(v)) out.push({ wert: v, hinweis: 'Tausenderstelle korrigiert' });
-      }
-    }
-  }
-  return out;
-}
-
 function mSchnellAbfahrt() {
   const bis = (document.getElementById('ms-bis').value || '').trim();
   if (!bis) { showToast('⚠ Bitte Zielort eingeben!'); return; }
@@ -3907,9 +3598,7 @@ function exportCSV() {
           <label>KM-Stand Abfahrt</label>
           <input type="number" id="ms-km-start" placeholder="0" inputmode="numeric">
         </div>
-        <button class="m-scan-btn" onclick="mScanKm('ms-km-start')" title="Tacho fotografieren oder Foto wählen">📷</button>
       </div>
-      <div class="ms-ocr-hint">📷 Tacho fotografieren oder aus Fotos wählen → KM wird automatisch erkannt</div>
 
       <!-- Startort -->
       <div class="m-km-row" style="margin-top:16px">
@@ -3948,42 +3637,18 @@ function exportCSV() {
         <div style="font-size:13px;color:rgba(200,151,58,0.5)" id="ms-tc-info"></div>
       </div>
 
-      <!-- KM-Ende Scan -->
+      <!-- KM-Ende -->
       <div class="m-km-row">
         <div class="m-field">
           <label>KM-Stand Ankunft</label>
           <input type="number" id="ms-km-end" placeholder="0" inputmode="numeric">
         </div>
-        <button class="m-scan-btn" onclick="mScanKm('ms-km-end')" title="Tacho fotografieren oder Foto wählen">📷</button>
       </div>
-      <div class="ms-ocr-hint">📷 Tacho fotografieren oder aus Fotos wählen → KM wird automatisch übernommen</div>
 
       <button class="m-big-btn green" style="margin-top:24px" onclick="mSchnellAnkunft()">✦ Ankunft speichern</button>
       <button class="m-big-btn danger" style="margin-top:10px" onclick="mFahrtAbbrechen()">✕ Fahrt abbrechen</button>
     </div>
   </div>
-
-  <!-- verstecktes File-Input für KM-Scan: ohne capture → iOS zeigt Auswahl Kamera / Fotos / Datei -->
-  <input type="file" id="km-scan-input" accept="image/*"
-    style="display:none" onchange="mProcessScan(event)">
-
-  <!-- ── Zuschnitt-Overlay für KM-Scan: Rahmen über das Zählwerk ziehen ── -->
-  <div id="km-crop-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);">
-    <div style="position:absolute;top:0;left:0;right:0;padding:14px;text-align:center;color:#fff;font-size:14px;background:rgba(0,0,0,0.6);z-index:2;">
-      Rahmen über die KM-Ziffern ziehen, dann „Erkennen"
-    </div>
-    <div id="km-crop-stage" style="position:absolute;inset:0;overflow:hidden;">
-      <img id="km-crop-img" style="position:absolute;transform-origin:0 0;" alt="">
-      <div id="km-crop-box" style="position:absolute;border:2px solid #c8973a;box-shadow:0 0 0 9999px rgba(0,0,0,0.45);box-sizing:border-box;touch-action:none;">
-        <div class="km-crop-handle" data-corner="se" style="position:absolute;right:-14px;bottom:-14px;width:34px;height:34px;background:#c8973a;border-radius:50%;touch-action:none;"></div>
-      </div>
-    </div>
-    <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;display:flex;gap:12px;background:rgba(0,0,0,0.6);z-index:2;">
-      <button onclick="mCropCancel()" style="flex:1;padding:16px;border:1px solid #555;background:#222;color:#fff;border-radius:12px;font-size:16px;">Abbrechen</button>
-      <button onclick="mCropConfirm()" style="flex:2;padding:16px;border:none;background:#c8973a;color:#1a1a1a;border-radius:12px;font-size:16px;font-weight:600;">🔍 Erkennen</button>
-    </div>
-  </div>
-
 
   <!-- ── SCREEN: FAHRTENBUCH ── -->
   <div class="m-screen" id="m-screen-buch">
