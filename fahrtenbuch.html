@@ -3194,7 +3194,7 @@ async function initGitHubSync() {
     loadGitHubSettings();
     await loadFromGitHub();
     try { if (document.getElementById('entries-list')) renderBuch(); } catch(e) {}
-    try { if (window.innerWidth <= 767) { mRenderHome(); mRenderBuch(); } } catch(e) {}
+    try { if (window.innerWidth <= 767) { mRenderHome(); mRenderBuch(); mRenderSchnell(); } } catch(e) {}
   } catch(e) {
     console.error('initGitHubSync error:', e);
     setSyncBadge('err', 'Init-Fehler: ' + e.message);
