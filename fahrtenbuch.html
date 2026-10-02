@@ -3650,9 +3650,9 @@ function exportCSV() {
           <label>KM-Stand Abfahrt</label>
           <input type="number" id="ms-km-start" placeholder="0" inputmode="numeric">
         </div>
-        <button class="m-scan-btn" onclick="mScanKm('ms-km-start')" title="Tacho fotografieren">📷</button>
+        <button class="m-scan-btn" onclick="mScanKm('ms-km-start')" title="Tacho fotografieren oder Foto wählen">📷</button>
       </div>
-      <div class="ms-ocr-hint">📷 Tacho fotografieren → KM wird automatisch erkannt</div>
+      <div class="ms-ocr-hint">📷 Tacho fotografieren oder aus Fotos wählen → KM wird automatisch erkannt</div>
 
       <!-- Startort -->
       <div class="m-km-row" style="margin-top:16px">
@@ -3697,17 +3697,17 @@ function exportCSV() {
           <label>KM-Stand Ankunft</label>
           <input type="number" id="ms-km-end" placeholder="0" inputmode="numeric">
         </div>
-        <button class="m-scan-btn" onclick="mScanKm('ms-km-end')" title="Tacho fotografieren">📷</button>
+        <button class="m-scan-btn" onclick="mScanKm('ms-km-end')" title="Tacho fotografieren oder Foto wählen">📷</button>
       </div>
-      <div class="ms-ocr-hint">📷 Tacho fotografieren → KM wird automatisch übernommen</div>
+      <div class="ms-ocr-hint">📷 Tacho fotografieren oder aus Fotos wählen → KM wird automatisch übernommen</div>
 
       <button class="m-big-btn green" style="margin-top:24px" onclick="mSchnellAnkunft()">✦ Ankunft speichern</button>
       <button class="m-big-btn danger" style="margin-top:10px" onclick="mFahrtAbbrechen()">✕ Fahrt abbrechen</button>
     </div>
   </div>
 
-  <!-- verstecktes File-Input für KM-Scan -->
-  <input type="file" id="km-scan-input" accept="image/*" capture="environment"
+  <!-- verstecktes File-Input für KM-Scan: ohne capture → iOS zeigt Auswahl Kamera / Fotos / Datei -->
+  <input type="file" id="km-scan-input" accept="image/*"
     style="display:none" onchange="mProcessScan(event)">
 
   <!-- ── SCREEN: FAHRTENBUCH ── -->
