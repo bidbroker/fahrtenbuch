@@ -2556,32 +2556,120 @@ async function mProcessScan(event) {
   showToast('🔍 KM-Stand wird erkannt …');
 
   try {
-    // Canvas-Vorverarbeitung: Graustufen + Kontrast für bessere OCR-Qualität
+    // Bild-Vorverarbeitung: hochskalieren + Graustufen + starker Kontrast
     const img = await createImageBitmap(file);
+    const scale = Math.min(2, 1600 / Math.max(img.width, img.height) || 1);
+    const w = Math.round(img.width * (scale > 0 ? scale : 1));
+    const h = Math.round(img.height * (scale > 0 ? scale : 1));
     const canvas = document.createElement('canvas');
-    canvas.width = img.width; canvas.height = img.height;
+    canvas.width = w; canvas.height = h;
     const ctx = canvas.getContext('2d');
-    ctx.filter = 'grayscale(1) contrast(1.8)';
-    ctx.drawImage(img, 0, 0);
+    ctx.filter = 'grayscale(1) contrast(2.2) brightness(1.1)';
+    ctx.drawImage(img, 0, 0, w, h);
 
     const { data: { text } } = await Tesseract.recognize(canvas, 'eng', {
       tessedit_char_whitelist: '0123456789'
     });
 
     const matches = text.replace(/\D/g, ' ').trim().split(/\s+/).filter(Boolean);
-    const km = matches
+    // Kandidaten: 4–7 Ziffern, längste zuerst
+    const kandidaten = matches
       .filter(m => m.length >= 4 && m.length <= 7)
-      .sort((a,b) => b.length - a.length)[0];
+      .map(m => parseInt(m, 10))
+      .filter(n => !isNaN(n))
+      .sort((a,b) => String(b).length - String(a).length);
 
-    if (km) {
-      document.getElementById(kmScanTargetId).value = parseInt(km);
-      showToast('✓ ' + parseInt(km).toLocaleString('de-AT') + ' km erkannt');
+    const letzter = mLetzterKmStand();
+    const result = mPlausibelsterKm(kandidaten, letzter);
+
+    const el = document.getElementById(kmScanTargetId);
+    if (result.wert != null) {
+      el.value = result.wert;
+      if (result.sicher) {
+        showToast('✓ ' + result.wert.toLocaleString('de-AT') + ' km erkannt');
+      } else {
+        showToast('⚠ ' + result.wert.toLocaleString('de-AT') + ' km — bitte prüfen! ' + result.hinweis);
+      }
+    } else if (kandidaten.length) {
+      el.value = kandidaten[0];
+      showToast('⚠ ' + kandidaten[0].toLocaleString('de-AT') + ' km unsicher — bitte prüfen');
     } else {
       showToast('⚠ Nicht erkannt — bitte manuell eingeben');
     }
   } catch(e) {
     showToast('⚠ Scan fehlgeschlagen — bitte manuell eingeben');
   }
+}
+
+// Letzter bekannter KM-Stand als Referenz für die Plausibilitätsprüfung
+function mLetzterKmStand() {
+  // Bei Ankunft: Startkilometer des laufenden Trips
+  if (kmScanTargetId === 'ms-km-end' && offeneFahrt && offeneFahrt.kmStart) {
+    return offeneFahrt.kmStart;
+  }
+  // Sonst: höchster kmEnd aller Fahrten
+  if (fahrten && fahrten.length) {
+    return fahrten.reduce((max, f) => Math.max(max, f.kmEnd || f.kmStart || 0), 0);
+  }
+  return 0;
+}
+
+// Wählt aus OCR-Kandidaten den plausibelsten Wert; versucht bei Bedarf eine
+// einzelne vom Zeiger verdeckte/falsch erkannte Ziffer anhand des letzten Standes zu korrigieren.
+function mPlausibelsterKm(kandidaten, letzter) {
+  const MIN_ZUWACHS = 1;   // eine Tour hat mindestens 1 km
+  const MAX_ZUWACHS = 800; // km pro Tour (großzügig)
+  const plausibel = k => letzter > 0 && (k - letzter) >= MIN_ZUWACHS && (k - letzter) <= MAX_ZUWACHS;
+
+  if (!kandidaten.length) return { wert: null };
+
+  // 1) Direkt plausibler Kandidat (>= letzter + sinnvoller Zuwachs)
+  const direkt = kandidaten.filter(plausibel).sort((a,b) => a-b);
+  if (direkt.length) return { wert: direkt[0], sicher: true };
+
+  // Kein Referenzwert → besten Kandidaten ohne Korrektur
+  if (letzter <= 0) return { wert: kandidaten[0], sicher: false, hinweis: '' };
+
+  const ziel = String(letzter);
+  const korrekturen = []; // {wert, hinweis}
+
+  for (const k of kandidaten) {
+    const s = String(k);
+
+    // 2a) Gleiche Stellenzahl, genau EINE abweichende Ziffer (Zeiger falsch erkannt)
+    if (s.length === ziel.length) {
+      const abw = [];
+      for (let i = 0; i < s.length; i++) if (s[i] !== ziel[i]) abw.push(i);
+      if (abw.length === 1) {
+        const i = abw[0];
+        for (let d = 0; d <= 9; d++) {
+          const v = parseInt(s.slice(0, i) + d + s.slice(i + 1), 10);
+          if (plausibel(v)) korrekturen.push({ wert: v, hinweis: '(1 Ziffer korrigiert)' });
+        }
+      }
+    }
+
+    // 2b) EINE Stelle zu wenig (Zeiger hat Ziffer ganz verschluckt) → an jeder Position einfügen
+    if (s.length === ziel.length - 1) {
+      for (let i = 0; i <= s.length; i++) {
+        for (let d = 0; d <= 9; d++) {
+          const v = parseInt(s.slice(0, i) + d + s.slice(i), 10);
+          if (plausibel(v)) korrekturen.push({ wert: v, hinweis: '(fehlende Ziffer ergänzt)' });
+        }
+      }
+    }
+  }
+
+  if (korrekturen.length) {
+    // Plausibelster = kleinster sinnvoller Zuwachs über MIN
+    korrekturen.sort((a,b) => a.wert - b.wert);
+    return { wert: korrekturen[0].wert, sicher: false, hinweis: korrekturen[0].hinweis + ' — bitte prüfen' };
+  }
+
+  // 3) Nichts korrigierbar → bester Kandidat >= letzter, sonst größter
+  const ueber = kandidaten.filter(k => k >= letzter).sort((a,b) => a-b)[0];
+  if (ueber != null) return { wert: ueber, sicher: false, hinweis: '(Zuwachs ungewöhnlich)' };
+  return { wert: Math.max(...kandidaten), sicher: false, hinweis: '(kleiner als letzter Stand!)' };
 }
 
 function mSchnellAbfahrt() {
