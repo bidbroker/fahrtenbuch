@@ -1424,7 +1424,7 @@
       "zweck": "Einkaufen",
       "von": "Jesolo",
       "bis": "Brico",
-      "kmStart": 26772,
+      "kmStart": 26775,
       "timeStart": "15:49",
       "fahrer": "Christian Rapberger",
       "mitfahrer": "Andrea",
@@ -1439,7 +1439,7 @@
         }
       ],
       "kmEnd": 26789,
-      "strecke": 17,
+      "strecke": 14,
       "timeEnd": "18:51",
       "gesamtLiter": 10,
       "verbrauch": "58.8"
